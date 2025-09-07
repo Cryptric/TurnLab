@@ -1,0 +1,18 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file>res/icons/facing.png</file>
+        <file>res/icons/turning.png</file>
+        <file>res/icons/contouring.png</file>
+        <file>res/icons/threading.png</file>
+        <file>res/icons/parting.png</file>
+        <file>res/icons/drilling.png</file>
+
+        <file>res/icons/lathe.png</file>
+        <file>res/icons/tool.png</file>
+
+        <file>res/icons/import.png</file>
+        <file>res/icons/folder.png</file>
+        <file>res/icons/save.png</file>
+    </qresource>
+</RCC>
