@@ -5,7 +5,7 @@
 #include <QApplication>
 #include <QPushButton>
 
-#include "gui/MainWindow.h"
+#include "view/MainWindow.h"
 
 int main(int argc, char *argv[]) {
     QApplication qtApp(argc, argv);

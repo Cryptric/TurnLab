@@ -13,7 +13,11 @@
 #include <QMenuBar>
 #include <QToolBar>
 #include <QLabel>
+#include <QSplitter>
+
+#include "GeometryView.h"
 #include "ToolTableDialog.h"
+#include "LeftPanel.h"
 
 
 class MainWindow : public QMainWindow {
@@ -22,7 +26,11 @@ class MainWindow : public QMainWindow {
 private:
     QWidget* centralWidget;
     QVBoxLayout* mainLayout;
+    QSplitter* mainSplitter;
+    LeftPanel* leftPanel;
+    QWidget* rightContentArea;
     QToolBar* ribbonBar;
+    GeometryView* geometryView;
 
 
 public:

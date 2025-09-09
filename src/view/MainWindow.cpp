@@ -6,9 +6,10 @@
 #include <QApplication>
 #include <QAction>
 #include <QStyle>
+#include <QSplitter>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), centralWidget(nullptr), mainLayout(nullptr), ribbonBar(nullptr) {
+    : QMainWindow(parent), centralWidget(nullptr), mainLayout(nullptr), mainSplitter(nullptr), leftPanel(nullptr), rightContentArea(nullptr), ribbonBar(nullptr) {
     setupUI();
     resize(1920, 1080);
 }
@@ -28,9 +29,21 @@ void MainWindow::setupUI() {
     
     createRibbonBar();
     
-    QWidget* contentArea = new QWidget();
-    contentArea->setStyleSheet("background-color: #f0f0f0;");
-    mainLayout->addWidget(contentArea, 1);
+    mainSplitter = new QSplitter(Qt::Horizontal, this);
+    
+    leftPanel = new LeftPanel(this);
+    mainSplitter->addWidget(leftPanel);
+    
+    geometryView = new GeometryView(this);
+    mainSplitter->addWidget(geometryView);
+
+
+    
+    mainSplitter->setSizes({250, 1000});
+    mainSplitter->setCollapsible(0, false);
+    mainSplitter->setCollapsible(1, false);
+    
+    mainLayout->addWidget(mainSplitter, 1);
 }
 
 void MainWindow::createRibbonBar() {
