@@ -6,6 +6,7 @@
 #define TURNLAB_GEOMETRYVIEW_H
 
 #include <QtCharts/QChartView>
+#include <vector>
 
 #include "../model/geometry/Segment.h"
 #include "../model/geometry/Geometry.h"
@@ -21,8 +22,8 @@ public:
     ~GeometryView() override = default;
 
 public slots:
-    void setGeometry(const Geometry &geometry);
-    void setSelectedSegments(const std::vector<Segment> &segments);
+    void setGeometry(const Geometry& geometry);
+    void setSelectedSegments(std::vector<size_t> selectedSegmentIndices);
 
 signals:
     void segmentSelected(int segmentIndex);

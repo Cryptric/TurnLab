@@ -11,22 +11,12 @@ include(GoogleTest)
 add_executable(TurnLabTests
         PointTest.cpp
         DXFUtilsTest.cpp
-        ../src/model/geometry/Point.cpp
-        ../src/model/geometry/Line.cpp
-        ../src/utils/DXFUtils.cpp
-        ../src/model/geometry/Geometry.cpp
-)
-
-target_include_directories(TurnLabTests PRIVATE
-        ../src/model/geometry
-        ../src/utils
 )
 
 target_link_libraries(TurnLabTests
+        TurnLabCore
         GTest::gtest_main
         GTest::gtest
-        spdlog::spdlog
-        dime::dime
 )
 
 # Define source directory macro for tests

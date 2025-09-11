@@ -19,6 +19,7 @@ public:
     ~Line() override = default;
 
     bool operator==(const Segment& other) const override;
+    std::unique_ptr<Segment> clone() const override;
 };
 
 #endif //TURNLAB_LINE_H

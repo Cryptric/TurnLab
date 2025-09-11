@@ -9,6 +9,9 @@
 
 #include <cmath>
 
+#include "../model/geometry/Geometry.h"
+#include "../model/geometry/Segment.h"
+
 
 
 GeometryView::GeometryView(QWidget *parent) : QChartView(parent) {
@@ -27,6 +30,6 @@ void GeometryView::setGeometry(const Geometry &geometry) {
     // TODO: Implement geometry loading and display
 }
 
-void GeometryView::setSelectedSegments(const std::vector<Segment> &segments) {
+void GeometryView::setSelectedSegments(std::vector<size_t> selectedSegmentIndices) {
     // TODO: Implement segment selection visualization
 }
