@@ -7,6 +7,11 @@
 
 
 class Segment {
+
+public:
+    virtual ~Segment() = default;
+    virtual bool operator==(const Segment& other) const = 0;
+
 };
 
 
