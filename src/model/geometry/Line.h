@@ -18,7 +18,9 @@ public:
     Line(double x1, double y1, double x2, double y2) : p1(x1, y1), p2(x2, y2) {}
     ~Line() override = default;
 
+    double distance(const Point& point) const override;
     bool operator==(const Segment& other) const override;
+    bool operator!=(const Segment& other) const;
     std::unique_ptr<Segment> clone() const override;
 };
 

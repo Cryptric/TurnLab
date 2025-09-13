@@ -11,6 +11,8 @@ include(GoogleTest)
 add_executable(TurnLabTests
         PointTest.cpp
         DXFUtilsTest.cpp
+        VectorTest.cpp
+        LineTest.cpp
 )
 
 target_link_libraries(TurnLabTests

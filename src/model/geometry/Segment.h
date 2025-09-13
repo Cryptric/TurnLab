@@ -7,11 +7,13 @@
 
 #include <memory>
 
+#include "Point.h"
 
 class Segment {
 
 public:
     virtual ~Segment() = default;
+    virtual double distance(const Point& point) const = 0;
     virtual bool operator==(const Segment& other) const = 0;
     virtual std::unique_ptr<Segment> clone() const = 0;
 

@@ -17,6 +17,25 @@ find_package(Qt6 COMPONENTS
 
 find_package(spdlog REQUIRED)
 find_package(dime REQUIRED)
+find_path(QWT_INCLUDE_DIR qwt_plot.h
+        PATHS /usr/include/qwt-qt6
+        /usr/include/qwt
+        /usr/local/include/qwt
+        /usr/include/qt6/qwt
+        /usr/local/include/qt6/qwt
+        $ENV{QWT_ROOT}/include
+)
+
+find_library(QWT_LIBRARY NAMES qwt-qt6 qwt
+        PATHS /usr/lib
+        /usr/local/lib
+        /usr/lib/x86_64-linux-gnu
+        $ENV{QWT_ROOT}/lib
+)
+
+if(NOT QWT_INCLUDE_DIR OR NOT QWT_LIBRARY)
+    message(FATAL_ERROR "QWT library not found")
+endif()
 
 # Create core library with all business logic
 add_library(TurnLabCore STATIC
@@ -29,6 +48,8 @@ add_library(TurnLabCore STATIC
         src/model/geometry/Point.h
         src/model/geometry/Line.h
         src/utils/DXFUtils.h
+        src/model/geometry/Vector.cpp
+        src/model/geometry/Vector.h
 )
 
 target_include_directories(TurnLabCore PUBLIC
@@ -50,7 +71,13 @@ add_executable(TurnLab
         src/view/LeftPanel.cpp 
         src/view/GeometryView.cpp
         src/view/GeometryView.h
+        src/view/DXFImportDialog.cpp
+        src/view/DXFImportDialog.h
         ${QT_RESOURCES}
+        src/presenter/MainPresenter.cpp
+        src/presenter/MainPresenter.h
+        src/presenter/DXFImportPresenter.cpp
+        src/presenter/DXFImportPresenter.h
 )
 
 target_link_libraries(TurnLab
@@ -59,7 +86,9 @@ target_link_libraries(TurnLab
         Qt::Gui
         Qt::Widgets
         Qt::Charts
+        ${QWT_LIBRARY}
 )
+target_include_directories(TurnLab PRIVATE ${QWT_INCLUDE_DIR})
 
 # Include test configuration
 add_subdirectory(test)
