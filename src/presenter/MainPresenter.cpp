@@ -4,13 +4,98 @@
 
 #include "MainPresenter.h"
 
+#include <fstream>
+#include <nlohmann/json.hpp>
+#include <QStandardPaths>
+#include <spdlog/spdlog.h>
+
+#include "MachineConfigPresenter.h"
+
 MainPresenter::MainPresenter() {
+    loadMachineConfig();
     window.show();
+    connectSignals();
 }
 
-MainPresenter::MainPresenter(std::string inputDXF) {
-    window.show();
-    dxfImportPresenter = std::make_unique<DXFImportPresenter>(inputDXF, &window);
-    dxfImportPresenter->showDialog();
+MainPresenter::MainPresenter(const std::string &inputDXF) : MainPresenter() {
+    showDXFImportDialog(inputDXF);
 }
+
+void MainPresenter::connectSignals() {
+    connect(&window, &MainWindow::onMachineConfigPressed, this, &MainPresenter::showMachineConfigDialog);
+}
+
+void MainPresenter::showDXFImportDialog(const std::string& inputDXF) {
+    DXFImportPresenter presenter(inputDXF, &window);
+    presenter.showDialog();
+}
+
+void MainPresenter::showMachineConfigDialog() {
+    spdlog::info("Showing machine config dialog");
+    MachineConfigPresenter presenter(&window);
+    MachineConfig updatedConfig = presenter.showDialog(machineConfig);
+    
+    // Save the updated configuration
+    machineConfig = updatedConfig;
+    saveMachineConfig();
+    spdlog::info("Machine configuration updated and saved");
+}
+
+std::filesystem::path MainPresenter::getConfigPath() {
+    // Get platform-appropriate config directory
+    const QString configDir = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+    const std::filesystem::path configPath = std::filesystem::path(configDir.toStdString()) / "turnlab";
+    
+    // Create directory if it doesn't exist
+    std::filesystem::create_directories(configPath);
+    
+    return configPath / "machine_config.json";
+}
+
+void MainPresenter::loadMachineConfig() {
+    try {
+        std::filesystem::path configFile = getConfigPath();
+        
+        if (!std::filesystem::exists(configFile)) {
+            spdlog::info("Machine config file not found, using defaults");
+            // machineConfig will use default values from constructor
+            return;
+        }
+        
+        std::ifstream file(configFile);
+        if (!file.is_open()) {
+            spdlog::error("Failed to open machine config file: {}", configFile.string());
+            return;
+        }
+        
+        nlohmann::json j;
+        file >> j;
+        machineConfig = j.get<MachineConfig>();
+        
+        spdlog::info("Machine configuration loaded from: {}", configFile.string());
+    } catch (const std::exception& e) {
+        spdlog::error("Error loading machine config: {}", e.what());
+        // Continue with default configuration
+    }
+}
+
+void MainPresenter::saveMachineConfig() {
+    try {
+        std::filesystem::path configFile = getConfigPath();
+        
+        std::ofstream file(configFile);
+        if (!file.is_open()) {
+            spdlog::error("Failed to create machine config file: {}", configFile.string());
+            return;
+        }
+        
+        nlohmann::json j = machineConfig;
+        file << j.dump(2);  // Pretty print with 2-space indentation
+        
+        spdlog::info("Machine configuration saved to: {}", configFile.string());
+    } catch (const std::exception& e) {
+        spdlog::error("Error saving machine config: {}", e.what());
+    }
+}
+
 

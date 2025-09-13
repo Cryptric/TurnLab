@@ -44,6 +44,9 @@ private:
     void setupUI();
     void createRibbonBar();
 
+signals:
+    void onMachineConfigPressed();
+    void onToolTablePressed();
 
 };
 

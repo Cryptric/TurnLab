@@ -72,8 +72,9 @@ void MainWindow::createRibbonBar() {
 
     QAction* toolTableAction = ribbonBar->addAction(QIcon(":res/icons/tool.png"), "Tool Table");
     QAction* machineConfigAction = ribbonBar->addAction(QIcon(":/res/icons/lathe.png"), "Machine Configuration");
-    
+
     connect(toolTableAction, &QAction::triggered, this, &MainWindow::showToolTable);
+    connect(machineConfigAction, &QAction::triggered, this, [this]() {emit this->onMachineConfigPressed(); });
 }
 
 void MainWindow::showToolTable() {

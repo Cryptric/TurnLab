@@ -17,6 +17,7 @@ find_package(Qt6 COMPONENTS
 
 find_package(spdlog REQUIRED)
 find_package(dime REQUIRED)
+find_package(nlohmann_json REQUIRED)
 find_path(QWT_INCLUDE_DIR qwt_plot.h
         PATHS /usr/include/qwt-qt6
         /usr/include/qwt
@@ -50,6 +51,7 @@ add_library(TurnLabCore STATIC
         src/utils/DXFUtils.h
         src/model/geometry/Vector.cpp
         src/model/geometry/Vector.h
+        src/model/MachineConfig.h
 )
 
 target_include_directories(TurnLabCore PUBLIC
@@ -60,6 +62,7 @@ target_include_directories(TurnLabCore PUBLIC
 target_link_libraries(TurnLabCore PUBLIC
         spdlog::spdlog
         dime::dime
+        nlohmann_json::nlohmann_json
 )
 
 qt6_add_resources(QT_RESOURCES resources.qrc)
@@ -73,11 +76,15 @@ add_executable(TurnLab
         src/view/GeometryView.h
         src/view/DXFImportDialog.cpp
         src/view/DXFImportDialog.h
+        src/view/MachineConfigDialog.cpp
+        src/view/MachineConfigDialog.h
         ${QT_RESOURCES}
         src/presenter/MainPresenter.cpp
         src/presenter/MainPresenter.h
         src/presenter/DXFImportPresenter.cpp
         src/presenter/DXFImportPresenter.h
+        src/presenter/MachineConfigPresenter.cpp
+        src/presenter/MachineConfigPresenter.h
 )
 
 target_link_libraries(TurnLab

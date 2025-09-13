@@ -6,20 +6,32 @@
 #define TURNLAB_MAINPRESENTER_H
 
 #include <string>
+#include <filesystem>
 
 #include "../view/MainWindow.h"
 #include "DXFImportPresenter.h"
+#include "../model/MachineConfig.h"
 
 
+class MainPresenter : public QObject {
+    Q_OBJECT
 
-class MainPresenter {
     MainWindow window;
 
-    std::unique_ptr<DXFImportPresenter> dxfImportPresenter;
+    MachineConfig machineConfig;
+
+    void connectSignals();
+    void loadMachineConfig();
+    void saveMachineConfig();
+    std::filesystem::path getConfigPath();
+
+    void showMachineConfigDialog();
+    void showDXFImportDialog(const std::string& inputDXF);
 
 public:
     MainPresenter();
-    explicit MainPresenter(std::string inputDXF);
+    explicit MainPresenter(const std::string &inputDXF);
+    ~MainPresenter() = default;
 
 };
 
