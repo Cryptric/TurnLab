@@ -130,6 +130,10 @@ void DXFImportDialog::setGeometry(const Geometry& geometry) {
     geometryView->setGeometry(geometry);
 }
 
+void DXFImportDialog::setStock(const StockMaterial& stock) {
+    // TODO
+}
+
 void DXFImportDialog::onOkClicked() {
     emit importAccepted();
     accept();

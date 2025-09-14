@@ -18,11 +18,15 @@
 #include <qwt_plot_grid.h>
 #include <qwt_plot_marker.h>
 #include <qwt_symbol.h>
+#include <qwt_plot_shapeitem.h>
 
 #include "../model/geometry/Geometry.h"
 #include "../model/MachineConfig.h"
+#include "../model/StockMaterial.h"
 
 #define HOVER_TOLERANCE_PX 5.0
+
+#define STOCK_COLOR QColor(110, 45, 0, 80)
 
 #define POINT_SYMBOL new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::black), QPen(Qt::black), QSize(10, 10))
 #define POINT_HOVER_SYMBOL new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::green), QPen(Qt::green), QSize(10, 10))
@@ -61,6 +65,8 @@ private:
     bool pointPicking = false;
     long long hoveredPointIndex = -1;
 
+    std::unique_ptr<QwtPlotShapeItem> stockPlot;
+
 public:
     explicit GeometryView(const MachineConfig& config, QWidget *parent = nullptr);
 
@@ -69,6 +75,8 @@ public:
 
     void enablePointPicking();
     void disablePointPicking();
+
+    void plotStock(const StockMaterial& stock);
 
     ~GeometryView() override = default;
 

@@ -66,6 +66,10 @@ private slots:
     void onRadialOffsetChanged(double offset);
     void onUnitsChanged(const QString& units);
 
+    void onStockStartOffsetChanged(double offset);
+    void onStockEndOffsetChanged(double offset);
+    void onStockRadiusChanged(double radius);
+
     void onImportAccepted();
     void onImportCancelled();
 

@@ -56,6 +56,8 @@ public:
     // Geometry display
     void setGeometry(const Geometry& geometry);
 
+    void setStock(const StockMaterial &stock);
+
 public slots:
     void deactivateCenterLineSelection();
     void deactivateZeroPointSelection();
@@ -77,6 +79,10 @@ signals:
     void onAxialOffsetChanged(double offset);
     void onRadialOffsetChanged(double offset);
     void onUnitsChanged(const QString& units);
+
+    void onStockStartOffsetChanged(double offset);
+    void onStockEndOffsetChanged(double offset);
+    void onStockRadiusChanged(double radius);
 
     void importAccepted();
     void importCancelled();
