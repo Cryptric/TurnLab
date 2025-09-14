@@ -77,6 +77,7 @@ public:
     void disablePointPicking();
 
     void plotStock(const StockMaterial& stock);
+    void hideStock();
 
     ~GeometryView() override = default;
 

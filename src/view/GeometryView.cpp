@@ -41,8 +41,6 @@ GeometryView::GeometryView(const MachineConfig& config, QWidget *parent) : QwtPl
     clickPicker.setStateMachine(new QwtPickerClickPointMachine());
     connect(&clickPicker, QOverload<const QPointF&>::of(&QwtPlotPicker::selected), this, &GeometryView::onClicked);
 
-    plotStock({-1, 10, 3});
-
     replot();
 }
 
@@ -116,6 +114,11 @@ void GeometryView::plotStock(const StockMaterial& stock) {
     stockPlot->setPen(QPen(STOCK_COLOR, 1.0, Qt::SolidLine));
     stockPlot->setBrush(QBrush(STOCK_COLOR, Qt::SolidPattern));
     stockPlot->attach(this);
+    replot();
+}
+
+void GeometryView::hideStock() {
+    stockPlot.reset();
     replot();
 }
 

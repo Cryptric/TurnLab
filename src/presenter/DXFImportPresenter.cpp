@@ -38,6 +38,13 @@ void DXFImportPresenter::connectSignals() {
     connect(dialog.get(), &DXFImportDialog::onRadialOffsetChanged, this, &DXFImportPresenter::onRadialOffsetChanged);
     connect(dialog.get(), &DXFImportDialog::onUnitsChanged, this, &DXFImportPresenter::onUnitsChanged);
 
+    connect(dialog.get(), &DXFImportDialog::onStockStartOffsetChanged, this, &DXFImportPresenter::onStockStartOffsetChanged);
+    connect(dialog.get(), &DXFImportDialog::onStockEndOffsetChanged, this, &DXFImportPresenter::onStockEndOffsetChanged);
+    connect(dialog.get(), &DXFImportDialog::onStockRadiusChanged, this, &DXFImportPresenter::onStockRadiusChanged);
+
+    connect(dialog.get(), &DXFImportDialog::nextStageRequested, this, &DXFImportPresenter::onNextStageRequested);
+    connect(dialog.get(), &DXFImportDialog::previousStageRequested, this, &DXFImportPresenter::onPreviousStageRequested);
+
     connect(dialog.get(), &DXFImportDialog::importAccepted, this, &DXFImportPresenter::onImportAccepted);
     connect(dialog.get(), &DXFImportDialog::importCancelled, this, &DXFImportPresenter::onImportCancelled);
 }
@@ -214,6 +221,62 @@ void DXFImportPresenter::onUnitsChanged(const QString& units) {
     previousUnits = units;
 }
 
+void DXFImportPresenter::onStockStartOffsetChanged(double offset) {
+    spdlog::trace("Stock start position changed to {} mm", offset);
+    stockMaterial.startPosition = offset;
+    updateStockPreview();
+}
+
+void DXFImportPresenter::onStockEndOffsetChanged(double offset) {
+    spdlog::trace("Stock end position changed to {} mm", offset);
+    stockMaterial.endPosition = offset;
+    updateStockPreview();
+}
+
+void DXFImportPresenter::onStockRadiusChanged(double radius) {
+    spdlog::trace("Stock radius changed to {} mm", radius);
+    stockMaterial.radius = radius;
+    updateStockPreview();
+}
+
+void DXFImportPresenter::updateStockPreview() {
+    if (dialog) {
+        dialog->setStock(stockMaterial);
+    }
+}
+
+void DXFImportPresenter::onNextStageRequested() {
+    spdlog::trace("Transitioning to stock setup stage");
+    if (dialog) {
+        dialog->switchToStage(STOCK_SETUP);
+        double minPos = INFINITY;
+        double maxPos = -INFINITY;
+        double radius = 0.0;
+        Geometry transformedGeometry = geometry->transform(transformations);
+        for (const auto& segment : transformedGeometry.segments) {
+            if (Line* line = dynamic_cast<Line*>(segment.get())) {
+                minPos = std::min(minPos, line->p1.x);
+                minPos = std::min(minPos, line->p2.x);
+                maxPos = std::max(maxPos, line->p1.x);
+                maxPos = std::max(maxPos, line->p2.x);
+                radius = std::max(radius, line->p1.y);
+                radius = std::max(radius, line->p2.y);
+            }
+        }
+        stockMaterial.startPosition = minPos;
+        stockMaterial.endPosition = maxPos;
+        stockMaterial.radius = radius;
+        updateStockPreview();
+    }
+}
+
+void DXFImportPresenter::onPreviousStageRequested() {
+    spdlog::trace("Transitioning back to geometry setup stage");
+    if (dialog) {
+        dialog->hideStock();
+        dialog->switchToStage(GEOMETRY_SETUP);
+    }
+}
 
 void DXFImportPresenter::onImportAccepted() {
     emit importConfigured();

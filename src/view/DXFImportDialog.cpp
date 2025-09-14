@@ -17,41 +17,69 @@ DXFImportDialog::DXFImportDialog(const MachineConfig& config, QWidget *parent) :
 void DXFImportDialog::setupLayout() {
     // Create main vertical layout
     auto* mainLayout = new QVBoxLayout(this);
-    
+
     // Create horizontal splitter for center content (geometry view + config panel)
     auto* splitter = new QSplitter(Qt::Horizontal, this);
-    
+
     // Create geometry view for the left/center
     geometryView = new GeometryView(machineConfig, this);
     splitter->addWidget(geometryView);
-    
+
     // Create configuration panel for the right side
-    auto* configGroup = new QGroupBox("Import Configuration", this);
+    configGroup = new QGroupBox("Geometry Setup", this);
     configGroup->setFixedWidth(300); // Fixed width for configuration panel
     splitter->addWidget(configGroup);
-    
+
     // Set splitter proportions (geometry view gets more space)
     splitter->setStretchFactor(0, 1); // GeometryView stretches
     splitter->setStretchFactor(1, 0); // ConfigPanel fixed
-    
+
     mainLayout->addWidget(splitter);
-    
-    // Create button panel for the bottom
-    auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    okButton = buttonBox->button(QDialogButtonBox::Ok);
-    cancelButton = buttonBox->button(QDialogButtonBox::Cancel);
-    mainLayout->addWidget(buttonBox);
-    
+
+    // Create custom button panel for the bottom
+    auto* buttonLayout = new QHBoxLayout();
+
+    backButton = new QPushButton("Back", this);
+    backButton->setVisible(false); // Hidden initially
+    nextButton = new QPushButton("Next", this);
+    cancelButton = new QPushButton("Cancel", this);
+    okButton = new QPushButton("Import", this);
+    okButton->setVisible(false); // Hidden initially
+
+    buttonLayout->addWidget(backButton);
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(cancelButton);
+    buttonLayout->addWidget(nextButton);
+    buttonLayout->addWidget(okButton);
+
+    mainLayout->addLayout(buttonLayout);
+
     setLayout(mainLayout);
 }
 
 void DXFImportDialog::setupConfigurationPanel() {
-    // Get the config group that was created in setupLayout()
-    auto* mainLayout = qobject_cast<QVBoxLayout*>(layout());
-    auto* splitter = qobject_cast<QSplitter*>(mainLayout->itemAt(0)->widget());
-    auto* configGroup = qobject_cast<QGroupBox*>(splitter->widget(1));
-    
-    auto* formLayout = new QFormLayout(configGroup);
+    // Create a main layout for the config group
+    auto* mainLayout = new QVBoxLayout(configGroup);
+
+    // Create geometry container widget
+    geometryWidget = new QWidget(this);
+    setupGeometryPanel();
+    mainLayout->addWidget(geometryWidget);
+
+    // Create stock container widget
+    stockWidget = new QWidget(this);
+    setupStockPanel();
+    mainLayout->addWidget(stockWidget);
+
+    // Initially show only geometry widget
+    geometryWidget->show();
+    stockWidget->hide();
+
+    configGroup->setLayout(mainLayout);
+}
+
+void DXFImportDialog::setupGeometryPanel() {
+    auto* formLayout = new QFormLayout(geometryWidget);
 
     // Select middle line
     centerLineSelection = new QPushButton("Select Middle Line", this);
@@ -87,7 +115,7 @@ void DXFImportDialog::setupConfigurationPanel() {
     mirrorLayout->addWidget(mirrorX);
     mirrorLayout->addWidget(mirrorZ);
     formLayout->addRow("Mirror:", mirrorLayout);
-    
+
     // Axial offset control
     axialOffsetSpinBox = new QDoubleSpinBox(this);
     axialOffsetSpinBox->setRange(-1000.0, 1000.0);
@@ -96,7 +124,7 @@ void DXFImportDialog::setupConfigurationPanel() {
     axialOffsetSpinBox->setValue(0.0);
     connect(axialOffsetSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this](double value) { emit onAxialOffsetChanged(value); });
     formLayout->addRow("Axial Offset:", axialOffsetSpinBox);
-    
+
     // Radial offset control
     radialOffsetSpinBox = new QDoubleSpinBox(this);
     radialOffsetSpinBox->setRange(-1000.0, 1000.0);
@@ -114,8 +142,61 @@ void DXFImportDialog::setupConfigurationPanel() {
     unitsCombo->setCurrentText("mm");
     connect(unitsCombo, QOverload<const QString&>::of(&QComboBox::currentTextChanged), [this](const QString& text) { emit onUnitsChanged(text); });
     formLayout->addRow("Units:", unitsCombo);
-    
-    configGroup->setLayout(formLayout);
+
+    geometryWidget->setLayout(formLayout);
+}
+
+void DXFImportDialog::setupStockPanel() {
+    auto* formLayout = new QFormLayout(stockWidget);
+
+    // Stock start position
+    stockStartSpinBox = new QDoubleSpinBox(this);
+    stockStartSpinBox->setRange(-1000.0, 1000.0);
+    stockStartSpinBox->setDecimals(3);
+    stockStartSpinBox->setSuffix(" mm");
+    stockStartSpinBox->setValue(-10.0);
+    connect(stockStartSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this](double value) { emit onStockStartOffsetChanged(value); });
+    formLayout->addRow("Start Position:", stockStartSpinBox);
+
+    // Stock end position
+    stockEndSpinBox = new QDoubleSpinBox(this);
+    stockEndSpinBox->setRange(-1000.0, 1000.0);
+    stockEndSpinBox->setDecimals(3);
+    stockEndSpinBox->setSuffix(" mm");
+    stockEndSpinBox->setValue(100.0);
+    connect(stockEndSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this](double value) { emit onStockEndOffsetChanged(value); });
+    formLayout->addRow("End Position:", stockEndSpinBox);
+
+    // Stock radius
+    stockRadiusSpinBox = new QDoubleSpinBox(this);
+    stockRadiusSpinBox->setRange(0.1, 500.0);
+    stockRadiusSpinBox->setDecimals(3);
+    stockRadiusSpinBox->setSuffix(" mm");
+    stockRadiusSpinBox->setValue(25.0);
+    connect(stockRadiusSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this](double value) { emit onStockRadiusChanged(value); });
+    formLayout->addRow("Radius:", stockRadiusSpinBox);
+
+    stockWidget->setLayout(formLayout);
+}
+
+void DXFImportDialog::switchToStage(ImportStage stage) {
+    currentStage = stage;
+
+    if (stage == GEOMETRY_SETUP) {
+        configGroup->setTitle("Geometry Setup");
+        geometryWidget->show();
+        stockWidget->hide();
+        backButton->setVisible(false);
+        nextButton->setVisible(true);
+        okButton->setVisible(false);
+    } else if (stage == STOCK_SETUP) {
+        configGroup->setTitle("Stock Material Setup");
+        geometryWidget->hide();
+        stockWidget->show();
+        backButton->setVisible(true);
+        nextButton->setVisible(false);
+        okButton->setVisible(true);
+    }
 }
 
 void DXFImportDialog::connectSignals() {
@@ -124,6 +205,8 @@ void DXFImportDialog::connectSignals() {
 
     connect(okButton, &QPushButton::clicked, this, &DXFImportDialog::onOkClicked);
     connect(cancelButton, &QPushButton::clicked, this, &DXFImportDialog::onCancelClicked);
+    connect(nextButton, &QPushButton::clicked, this, &DXFImportDialog::nextStageRequested);
+    connect(backButton, &QPushButton::clicked, this, &DXFImportDialog::previousStageRequested);
 }
 
 void DXFImportDialog::setGeometry(const Geometry& geometry) {
@@ -131,8 +214,16 @@ void DXFImportDialog::setGeometry(const Geometry& geometry) {
 }
 
 void DXFImportDialog::setStock(const StockMaterial& stock) {
-    // TODO
+    geometryView->plotStock(stock);
+    if (stockStartSpinBox) stockStartSpinBox->setValue(stock.startPosition);
+    if (stockEndSpinBox) stockEndSpinBox->setValue(stock.endPosition);
+    if (stockRadiusSpinBox) stockRadiusSpinBox->setValue(stock.radius);
 }
+
+void DXFImportDialog::hideStock() {
+    geometryView->hideStock();
+}
+
 
 void DXFImportDialog::onOkClicked() {
     emit importAccepted();

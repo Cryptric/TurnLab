@@ -12,6 +12,7 @@
 #include "../model/MachineConfig.h"
 #include "../view/DXFImportDialog.h"
 #include "../model/geometry/Geometry.h"
+#include "../model/StockMaterial.h"
 
 enum State {
     CENTER_LINE_SELECTION,
@@ -35,8 +36,11 @@ private:
     double previousRadialOffest = 0;
     QString previousUnits = "mm";
 
+    StockMaterial stockMaterial = {-10.0, 100.0, 25.0};
+
     void connectSignals();
     void updateGeometryPreview();
+    void updateStockPreview();
 
 public:
     explicit DXFImportPresenter(const std::string& dxfFilePath, const MachineConfig& config, QWidget* parent = nullptr);
@@ -69,6 +73,9 @@ private slots:
     void onStockStartOffsetChanged(double offset);
     void onStockEndOffsetChanged(double offset);
     void onStockRadiusChanged(double radius);
+
+    void onNextStageRequested();
+    void onPreviousStageRequested();
 
     void onImportAccepted();
     void onImportCancelled();

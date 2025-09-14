@@ -21,13 +21,24 @@
 #include "../model/MachineConfig.h"
 #include "../model/geometry/Geometry.h"
 
+enum ImportStage {
+    GEOMETRY_SETUP,
+    STOCK_SETUP
+};
+
 class DXFImportDialog : public QDialog {
     Q_OBJECT
 
 private:
     GeometryView* geometryView;
-    
-    // Configuration controls
+    ImportStage currentStage = GEOMETRY_SETUP;
+    QGroupBox* configGroup;
+
+    // Container widgets for each stage
+    QWidget* geometryWidget;
+    QWidget* stockWidget;
+
+    // Geometry setup controls
     QPushButton* centerLineSelection;
     QPushButton* zeroPointSelection;
     QPushButton* rotateCCW;
@@ -37,15 +48,24 @@ private:
     QDoubleSpinBox* axialOffsetSpinBox;
     QDoubleSpinBox* radialOffsetSpinBox;
     QComboBox* unitsCombo;
-    
+
+    // Stock setup controls
+    QDoubleSpinBox* stockStartSpinBox;
+    QDoubleSpinBox* stockEndSpinBox;
+    QDoubleSpinBox* stockRadiusSpinBox;
+
     // Dialog buttons
     QPushButton* okButton;
     QPushButton* cancelButton;
+    QPushButton* nextButton;
+    QPushButton* backButton;
 
     MachineConfig machineConfig;
 
     void setupLayout();
     void setupConfigurationPanel();
+    void setupGeometryPanel();
+    void setupStockPanel();
     void connectSignals();
 
 public:
@@ -57,6 +77,10 @@ public:
     void setGeometry(const Geometry& geometry);
 
     void setStock(const StockMaterial &stock);
+    void hideStock();
+
+    // Stage control
+    void switchToStage(ImportStage stage);
 
 public slots:
     void deactivateCenterLineSelection();
@@ -83,6 +107,9 @@ signals:
     void onStockStartOffsetChanged(double offset);
     void onStockEndOffsetChanged(double offset);
     void onStockRadiusChanged(double radius);
+
+    void nextStageRequested();
+    void previousStageRequested();
 
     void importAccepted();
     void importCancelled();
