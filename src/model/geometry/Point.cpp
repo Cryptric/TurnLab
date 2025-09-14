@@ -33,6 +33,21 @@ Point Point::operator-(const Point& other) const {
     return Point(x - other.x, y - other.y);
 }
 
+Point Point::transform(const std::vector<Transform> &transformations) {
+    Point transformedPoint = *this;
+    for (const auto& transform : transformations) {
+        transformedPoint = transformedPoint.apply(transform);
+    }
+    return transformedPoint;
+}
+
+Point Point::apply(const Transform &transformation) {
+    Point transformedPoint = *this;
+    transformedPoint.x = transformation.linear[0][0] * x + transformation.linear[0][1] * y + transformation.translation[0];
+    transformedPoint.y = transformation.linear[1][0] * x + transformation.linear[1][1] * y + transformation.translation[1];
+    return transformedPoint;
+}
+
 Point& Point::operator=(const std::vector<double>& vec) {
     if (vec.size() != 2) {
         throw std::invalid_argument("Vector must have exactly 2 elements for Point assignment");

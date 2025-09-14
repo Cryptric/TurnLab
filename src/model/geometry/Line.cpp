@@ -14,6 +14,13 @@ bool Line::operator==(const Segment &other) const {
     return false;
 }
 
+std::unique_ptr<Segment> Line::transform(const std::vector<Transform>& transformations) {
+    Point newP1 = p1.transform(transformations);
+    Point newP2 = p2.transform(transformations);
+    return std::make_unique<Line>(newP1, newP2);
+}
+
+
 std::unique_ptr<Segment> Line::clone() const {
     return std::make_unique<Line>(*this);
 }

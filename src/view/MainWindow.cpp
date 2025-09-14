@@ -8,8 +8,8 @@
 #include <QStyle>
 #include <QSplitter>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), centralWidget(nullptr), mainLayout(nullptr), mainSplitter(nullptr), leftPanel(nullptr), rightContentArea(nullptr), ribbonBar(nullptr) {
+MainWindow::MainWindow(const MachineConfig& config, QWidget *parent)
+    : machineConfig(config), QMainWindow(parent), centralWidget(nullptr), mainLayout(nullptr), mainSplitter(nullptr), leftPanel(nullptr), rightContentArea(nullptr), ribbonBar(nullptr) {
     setupUI();
     resize(1920, 1080);
 }
@@ -34,7 +34,7 @@ void MainWindow::setupUI() {
     leftPanel = new LeftPanel(this);
     mainSplitter->addWidget(leftPanel);
     
-    geometryView = new GeometryView(this);
+    geometryView = new GeometryView(machineConfig, this);
     mainSplitter->addWidget(geometryView);
 
 

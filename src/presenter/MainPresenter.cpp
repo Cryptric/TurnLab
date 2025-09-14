@@ -11,8 +11,7 @@
 
 #include "MachineConfigPresenter.h"
 
-MainPresenter::MainPresenter() {
-    loadMachineConfig();
+MainPresenter::MainPresenter() : machineConfig(loadMachineConfig()), window(machineConfig) {
     window.show();
     connectSignals();
 }
@@ -26,7 +25,7 @@ void MainPresenter::connectSignals() {
 }
 
 void MainPresenter::showDXFImportDialog(const std::string& inputDXF) {
-    DXFImportPresenter presenter(inputDXF, &window);
+    DXFImportPresenter presenter(inputDXF, machineConfig, &window);
     presenter.showDialog();
 }
 
@@ -52,30 +51,32 @@ std::filesystem::path MainPresenter::getConfigPath() {
     return configPath / "machine_config.json";
 }
 
-void MainPresenter::loadMachineConfig() {
+MachineConfig MainPresenter::loadMachineConfig() {
     try {
         std::filesystem::path configFile = getConfigPath();
         
         if (!std::filesystem::exists(configFile)) {
             spdlog::info("Machine config file not found, using defaults");
             // machineConfig will use default values from constructor
-            return;
+            return MachineConfig();
         }
         
         std::ifstream file(configFile);
         if (!file.is_open()) {
             spdlog::error("Failed to open machine config file: {}", configFile.string());
-            return;
+            return MachineConfig();
         }
         
         nlohmann::json j;
         file >> j;
-        machineConfig = j.get<MachineConfig>();
+        MachineConfig config = j.get<MachineConfig>();
         
         spdlog::info("Machine configuration loaded from: {}", configFile.string());
+        return config;
     } catch (const std::exception& e) {
         spdlog::error("Error loading machine config: {}", e.what());
         // Continue with default configuration
+        return MachineConfig();
     }
 }
 

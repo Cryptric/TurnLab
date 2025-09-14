@@ -24,6 +24,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 private:
+    const MachineConfig& machineConfig;
+
     QWidget* centralWidget;
     QVBoxLayout* mainLayout;
     QSplitter* mainSplitter;
@@ -34,7 +36,7 @@ private:
 
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(const MachineConfig& config, QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:

@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "Segment.h"
+#include "Transform.h"
 
 class Geometry {
 public:
@@ -17,10 +18,12 @@ public:
     virtual ~Geometry() = default;
 
     Geometry& operator=(const Geometry& other);
-    
+
     // Make movable
     Geometry(Geometry&&) = default;
     Geometry& operator=(Geometry&&) = default;
+
+    Geometry transform(std::vector<Transform> transformations);
 
     std::vector<std::unique_ptr<Segment>> segments;
 };

@@ -8,15 +8,15 @@
 #include <QString>
 #include <memory>
 
+#include "Transform.h"
+#include "../model/MachineConfig.h"
 #include "../view/DXFImportDialog.h"
 #include "../model/geometry/Geometry.h"
 
-struct DXFImportConfiguration {
-    double axialOffset = 0.0;
-    double radialOffset = 0.0;
-    QString chuckSide = "Left";
-    QString units = "mm";
-    bool accepted = false;
+enum State {
+    CENTER_LINE_SELECTION,
+    ZERO_POINT_SELECTION,
+    IDLE
 };
 
 class DXFImportPresenter : public QObject {
@@ -25,18 +25,25 @@ class DXFImportPresenter : public QObject {
 private:
     std::unique_ptr<DXFImportDialog> dialog;
     std::unique_ptr<Geometry> geometry;
-    DXFImportConfiguration config;
-    
+    const MachineConfig& machineConfig;
+
+    State state = IDLE;
+
+    std::vector<Transform> transformations;
+
+    double previousAxialOffset = 0;
+    double previousRadialOffest = 0;
+    QString previousUnits = "mm";
+
     void connectSignals();
     void updateGeometryPreview();
 
 public:
-    explicit DXFImportPresenter(QWidget* parent = nullptr);
-    explicit DXFImportPresenter(const std::string& dxfFilePath, QWidget* parent = nullptr);
+    explicit DXFImportPresenter(const std::string& dxfFilePath, const MachineConfig& config, QWidget* parent = nullptr);
     ~DXFImportPresenter() = default;
     
     // Show the dialog and return the configuration result
-    DXFImportConfiguration showDialog();
+    void showDialog();
     
     // Set geometry to preview
     void setGeometry(const Geometry& geometry);
@@ -45,12 +52,25 @@ public:
     bool loadDXFFile(const QString& filePath);
 
 private slots:
-    void onConfigurationChanged();
+    void activateCenterLineSelection(bool active);
+    void activateZeroPointSelection(bool active);
+    void segmentSelected(size_t index);
+    void pointSelected(const Point& point);
+
+    void onRotateCW();
+    void onRotateCCW();
+    void onMirrorX();
+    void onMirrorZ();
+
+    void onAxialOffsetChanged(double offset);
+    void onRadialOffsetChanged(double offset);
+    void onUnitsChanged(const QString& units);
+
     void onImportAccepted();
     void onImportCancelled();
 
 signals:
-    void importConfigured(const DXFImportConfiguration& config);
+    void importConfigured();
     void importCancelled();
 };
 

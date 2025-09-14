@@ -4,7 +4,7 @@
 
 #include "DXFImportDialog.h"
 
-DXFImportDialog::DXFImportDialog(QWidget *parent) : QDialog(parent) {
+DXFImportDialog::DXFImportDialog(const MachineConfig& config, QWidget *parent) : machineConfig(config), QDialog(parent) {
     setWindowTitle("DXF Import Configuration");
     setModal(true);
     resize(800, 600);
@@ -22,7 +22,7 @@ void DXFImportDialog::setupLayout() {
     auto* splitter = new QSplitter(Qt::Horizontal, this);
     
     // Create geometry view for the left/center
-    geometryView = new GeometryView(this);
+    geometryView = new GeometryView(machineConfig, this);
     splitter->addWidget(geometryView);
     
     // Create configuration panel for the right side
@@ -52,6 +52,41 @@ void DXFImportDialog::setupConfigurationPanel() {
     auto* configGroup = qobject_cast<QGroupBox*>(splitter->widget(1));
     
     auto* formLayout = new QFormLayout(configGroup);
+
+    // Select middle line
+    centerLineSelection = new QPushButton("Select Middle Line", this);
+    centerLineSelection->setCheckable(true);
+    connect(centerLineSelection, &QPushButton::toggled, [this](const bool checked) { emit activateCenterLineSelection(checked); });
+    formLayout->addRow("Middle Line:", centerLineSelection);
+
+    // Zero point selection
+    zeroPointSelection = new QPushButton("Select Zero Point", this);
+    zeroPointSelection->setCheckable(true);
+    connect(zeroPointSelection, &QPushButton::toggled, [this](const bool checked) {
+        geometryView->enablePointPicking();
+        emit activateZeroPointSelection(checked);
+    });
+    formLayout->addRow("Zero Point:", zeroPointSelection);
+
+    // Rotation
+    rotateCCW = new QPushButton(QIcon(":/res/icons/rotate-ccw"), "", this);
+    rotateCW = new QPushButton(QIcon(":/res/icons/rotate-cw"), "", this);
+    connect(rotateCCW, &QPushButton::clicked, [this]() { emit onRotateCCW(); });
+    connect(rotateCW, &QPushButton::clicked, [this]() { emit onRotateCW(); });
+    QHBoxLayout* rotationLayout = new QHBoxLayout();
+    rotationLayout->addWidget(rotateCCW);
+    rotationLayout->addWidget(rotateCW);
+    formLayout->addRow("Rotation:", rotationLayout);
+
+    // Mirror
+    mirrorX = new QPushButton(QIcon(":/res/icons/mirror-x.png"), "", this);
+    mirrorZ = new QPushButton(QIcon(":/res/icons/mirror-z.png"), "", this);
+    connect(mirrorX, &QPushButton::clicked, [this]() { emit onMirrorX(); });
+    connect(mirrorZ, &QPushButton::clicked, [this]() { emit onMirrorZ(); });
+    QHBoxLayout* mirrorLayout = new QHBoxLayout();
+    mirrorLayout->addWidget(mirrorX);
+    mirrorLayout->addWidget(mirrorZ);
+    formLayout->addRow("Mirror:", mirrorLayout);
     
     // Axial offset control
     axialOffsetSpinBox = new QDoubleSpinBox(this);
@@ -59,6 +94,7 @@ void DXFImportDialog::setupConfigurationPanel() {
     axialOffsetSpinBox->setDecimals(3);
     axialOffsetSpinBox->setSuffix(" mm");
     axialOffsetSpinBox->setValue(0.0);
+    connect(axialOffsetSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this](double value) { emit onAxialOffsetChanged(value); });
     formLayout->addRow("Axial Offset:", axialOffsetSpinBox);
     
     // Radial offset control
@@ -67,64 +103,31 @@ void DXFImportDialog::setupConfigurationPanel() {
     radialOffsetSpinBox->setDecimals(3);
     radialOffsetSpinBox->setSuffix(" mm");
     radialOffsetSpinBox->setValue(0.0);
+    connect(radialOffsetSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this](double value) { emit onRadialOffsetChanged(value); });
     formLayout->addRow("Radial Offset:", radialOffsetSpinBox);
-    
-    // Chuck side selection
-    chuckSideCombo = new QComboBox(this);
-    chuckSideCombo->addItem("Left");
-    chuckSideCombo->addItem("Right");
-    chuckSideCombo->setCurrentText("Left");
-    formLayout->addRow("Chuck Side:", chuckSideCombo);
-    
+
     // Units selection
     unitsCombo = new QComboBox(this);
     unitsCombo->addItem("mm");
     unitsCombo->addItem("m");
     unitsCombo->addItem("inch");
     unitsCombo->setCurrentText("mm");
+    connect(unitsCombo, QOverload<const QString&>::of(&QComboBox::currentTextChanged), [this](const QString& text) { emit onUnitsChanged(text); });
     formLayout->addRow("Units:", unitsCombo);
     
     configGroup->setLayout(formLayout);
 }
 
 void DXFImportDialog::connectSignals() {
-    // Connect configuration change signals
-    connect(axialOffsetSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-            this, &DXFImportDialog::onConfigurationChanged);
-    connect(radialOffsetSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-            this, &DXFImportDialog::onConfigurationChanged);
-    connect(chuckSideCombo, QOverload<const QString&>::of(&QComboBox::currentTextChanged),
-            this, &DXFImportDialog::onConfigurationChanged);
-    connect(unitsCombo, QOverload<const QString&>::of(&QComboBox::currentTextChanged),
-            this, &DXFImportDialog::onConfigurationChanged);
-    
-    // Connect button signals
+    connect(geometryView, &GeometryView::segmentSelected, this, &DXFImportDialog::segmentSelected);
+    connect(geometryView, &GeometryView::pointSelected, this, &DXFImportDialog::pointSelected);
+
     connect(okButton, &QPushButton::clicked, this, &DXFImportDialog::onOkClicked);
     connect(cancelButton, &QPushButton::clicked, this, &DXFImportDialog::onCancelClicked);
 }
 
-double DXFImportDialog::getAxialOffset() const {
-    return axialOffsetSpinBox->value();
-}
-
-double DXFImportDialog::getRadialOffset() const {
-    return radialOffsetSpinBox->value();
-}
-
-QString DXFImportDialog::getChuckSide() const {
-    return chuckSideCombo->currentText();
-}
-
-QString DXFImportDialog::getUnits() const {
-    return unitsCombo->currentText();
-}
-
 void DXFImportDialog::setGeometry(const Geometry& geometry) {
     geometryView->setGeometry(geometry);
-}
-
-void DXFImportDialog::onConfigurationChanged() {
-    emit configurationChanged();
 }
 
 void DXFImportDialog::onOkClicked() {
@@ -135,4 +138,13 @@ void DXFImportDialog::onOkClicked() {
 void DXFImportDialog::onCancelClicked() {
     emit importCancelled();
     reject();
+}
+
+void DXFImportDialog::deactivateCenterLineSelection() {
+    centerLineSelection->setChecked(false);
+}
+
+void DXFImportDialog::deactivateZeroPointSelection() {
+    zeroPointSelection->setChecked(false);
+    geometryView->disablePointPicking();
 }

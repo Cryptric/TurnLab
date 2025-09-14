@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include "Transform.h"
+
 class Point {
 public:
     double x;
@@ -22,6 +24,10 @@ public:
     Point operator+(const Point& other) const;
     Point operator-(const Point& other) const;
     Point& operator=(const std::vector<double>& vec);
+
+    Point transform(const std::vector<Transform> &transformations);
+
+    Point apply(const Transform &transformation);
 
     bool operator==(const Point& other) const;
     bool operator!=(const Point& other) const;

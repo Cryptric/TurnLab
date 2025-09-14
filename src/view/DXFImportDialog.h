@@ -18,6 +18,7 @@
 #include <QDialogButtonBox>
 
 #include "GeometryView.h"
+#include "../model/MachineConfig.h"
 #include "../model/geometry/Geometry.h"
 
 class DXFImportDialog : public QDialog {
@@ -27,39 +28,56 @@ private:
     GeometryView* geometryView;
     
     // Configuration controls
+    QPushButton* centerLineSelection;
+    QPushButton* zeroPointSelection;
+    QPushButton* rotateCCW;
+    QPushButton* rotateCW;
+    QPushButton* mirrorX;
+    QPushButton* mirrorZ;
     QDoubleSpinBox* axialOffsetSpinBox;
     QDoubleSpinBox* radialOffsetSpinBox;
-    QComboBox* chuckSideCombo;
     QComboBox* unitsCombo;
     
     // Dialog buttons
     QPushButton* okButton;
     QPushButton* cancelButton;
-    
+
+    MachineConfig machineConfig;
+
     void setupLayout();
     void setupConfigurationPanel();
     void connectSignals();
 
 public:
-    explicit DXFImportDialog(QWidget *parent = nullptr);
+    explicit DXFImportDialog(const MachineConfig& config, QWidget *parent = nullptr);
     ~DXFImportDialog() override = default;
     
-    // Configuration accessors
-    double getAxialOffset() const;
-    double getRadialOffset() const;
-    QString getChuckSide() const;
-    QString getUnits() const;
-    
+
     // Geometry display
     void setGeometry(const Geometry& geometry);
 
 public slots:
-    void onConfigurationChanged();
+    void deactivateCenterLineSelection();
+    void deactivateZeroPointSelection();
+
     void onOkClicked();
     void onCancelClicked();
 
 signals:
-    void configurationChanged();
+    void activateCenterLineSelection(bool active);
+    void activateZeroPointSelection(bool active);
+    void segmentSelected(size_t index);
+    void pointSelected(const Point& point);
+
+    void onRotateCW();
+    void onRotateCCW();
+    void onMirrorX();
+    void onMirrorZ();
+
+    void onAxialOffsetChanged(double offset);
+    void onRadialOffsetChanged(double offset);
+    void onUnitsChanged(const QString& units);
+
     void importAccepted();
     void importCancelled();
 };

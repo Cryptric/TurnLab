@@ -16,12 +16,12 @@
 class MainPresenter : public QObject {
     Q_OBJECT
 
-    MainWindow window;
-
     MachineConfig machineConfig;
 
+    MainWindow window;
+
     void connectSignals();
-    void loadMachineConfig();
+    MachineConfig loadMachineConfig();
     void saveMachineConfig();
     std::filesystem::path getConfigPath();
 

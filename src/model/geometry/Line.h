@@ -5,8 +5,12 @@
 #ifndef TURNLAB_LINE_H
 #define TURNLAB_LINE_H
 
+#include <memory>
+#include <vector>
+
 #include "Point.h"
 #include "Segment.h"
+#include "Transform.h"
 
 class Line : public Segment {
 public:
@@ -21,6 +25,7 @@ public:
     double distance(const Point& point) const override;
     bool operator==(const Segment& other) const override;
     bool operator!=(const Segment& other) const;
+    std::unique_ptr<Segment> transform(const std::vector<Transform>& transformations) override;
     std::unique_ptr<Segment> clone() const override;
 };
 

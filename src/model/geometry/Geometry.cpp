@@ -31,3 +31,11 @@ Geometry& Geometry::operator=(const Geometry& other) {
     }
     return *this;
 }
+
+Geometry Geometry::transform(std::vector<Transform> transformations) {
+    Geometry transformedGeometry;
+    for (const auto& segment : segments) {
+        transformedGeometry.segments.push_back(segment->transform(transformations));
+    }
+    return transformedGeometry;
+}

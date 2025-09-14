@@ -14,5 +14,10 @@
         <file>res/icons/import.png</file>
         <file>res/icons/folder.png</file>
         <file>res/icons/save.png</file>
+
+        <file>res/icons/mirror-x.png</file>
+        <file>res/icons/mirror-z.png</file>
+        <file>res/icons/rotate-cw.png</file>
+        <file>res/icons/rotate-ccw.png</file>
     </qresource>
 </RCC>
