@@ -14,6 +14,11 @@ OperationConfigurationView::OperationConfigurationView(QWidget* parent) : QTabWi
     setupUI();
 }
 
+OperationConfigurationView::OperationConfigurationView(const OperationConfigVisibility& visibilityConfig, QWidget* parent)
+    : QTabWidget(parent), config(visibilityConfig) {
+    setupUI();
+}
+
 void OperationConfigurationView::setupUI() {
     // Create tabs
     toolTab = new QWidget();
@@ -38,28 +43,28 @@ void OperationConfigurationView::setupUI() {
     feedrateInput->setSuffix(" mm/min");
     feedrateInput->setValue(100);
 
-    toolFormLayout->addRow("Tool:", toolSelector);
-    toolFormLayout->addRow("RPM:", rpmInput);
-    toolFormLayout->addRow("Feedrate:", feedrateInput);
+    if (config.showToolSelector) toolFormLayout->addRow("Tool:", toolSelector);
+    if (config.showRpmInput) toolFormLayout->addRow("RPM:", rpmInput);
+    if (config.showFeedrateInput) toolFormLayout->addRow("Feedrate:", feedrateInput);
 
     // Setup geometry tab
     QFormLayout* geometryLayout = new QFormLayout(geometryTab);
 
     geometrySelectionButton = new QPushButton("Select Geometry");
     geometrySelectionButton->setCheckable(true);
-    geometryLayout->addRow("Geometry Selection:", geometrySelectionButton);
+    if (config.showGeometrySelection) geometryLayout->addRow("Geometry Selection:", geometrySelectionButton);
 
     axialStartOffset = new QSpinBox();
     axialStartOffset->setRange(-1000, 1000);
     axialStartOffset->setSuffix(" mm");
     axialStartOffset->setValue(0);
-    geometryLayout->addRow("Axial Start Offset:", axialStartOffset);
+    if (config.showAxialStartOffset) geometryLayout->addRow("Axial Start Offset:", axialStartOffset);
 
     axialEndOffset = new QSpinBox();
     axialEndOffset->setRange(-1000, 1000);
     axialEndOffset->setSuffix(" mm");
     axialEndOffset->setValue(0);
-    geometryLayout->addRow("Axial End Offset:", axialEndOffset);
+    if (config.showAxialEndOffset) geometryLayout->addRow("Axial End Offset:", axialEndOffset);
 
     // Setup radii tab
     QFormLayout* radiiFormLayout = new QFormLayout(radiiTab);
@@ -89,11 +94,11 @@ void OperationConfigurationView::setupUI() {
     innerDistanceInput->setSuffix(" mm");
     innerDistanceInput->setValue(5);
 
-    radiiFormLayout->addRow("Retract Distance:", retractDistanceInput);
-    radiiFormLayout->addRow("Clearance Distance:", clearanceDistanceInput);
-    radiiFormLayout->addRow("Feed Distance:", feedDistanceInput);
-    radiiFormLayout->addRow("Outer Distance:", outerDistanceInput);
-    radiiFormLayout->addRow("Inner Distance:", innerDistanceInput);
+    if (config.showRetractDistance) radiiFormLayout->addRow("Retract Distance:", retractDistanceInput);
+    if (config.showClearanceDistance) radiiFormLayout->addRow("Clearance Distance:", clearanceDistanceInput);
+    if (config.showFeedDistance) radiiFormLayout->addRow("Feed Distance:", feedDistanceInput);
+    if (config.showOuterDistance) radiiFormLayout->addRow("Outer Distance:", outerDistanceInput);
+    if (config.showInnerDistance) radiiFormLayout->addRow("Inner Distance:", innerDistanceInput);
 
     // Setup passes tab
     stepoverInput = new QDoubleSpinBox();
@@ -123,15 +128,15 @@ void OperationConfigurationView::setupUI() {
     dwellTimeInput->setSuffix(" ms");
     dwellTimeInput->setValue(500);
 
-    passesLayout->addRow("Stepover:", stepoverInput);
-    passesLayout->addRow("Cut Depth per Pass:", cutDepthPerPassInput);
-    passesLayout->addRow("Spring Passes:", springPassesInput);
-    passesLayout->addRow("Peck Depth:", peckDepthInput);
-    passesLayout->addRow("Dwell Time:", dwellTimeInput);
+    if (config.showStepover) passesLayout->addRow("Stepover:", stepoverInput);
+    if (config.showCutDepthPerPass) passesLayout->addRow("Cut Depth per Pass:", cutDepthPerPassInput);
+    if (config.showSpringPasses) passesLayout->addRow("Spring Passes:", springPassesInput);
+    if (config.showPeckDepth) passesLayout->addRow("Peck Depth:", peckDepthInput);
+    if (config.showDwellTime) passesLayout->addRow("Dwell Time:", dwellTimeInput);
 
-    // Add tabs to the tab widget
-    addTab(toolTab, "Tool");
-    addTab(geometryTab, "Geometry");
-    addTab(radiiTab, "Radii");
-    addTab(passesTab, "Passes");
+    // Add tabs to the tab widget based on visibility configuration
+    if (config.showToolTab) addTab(toolTab, "Tool");
+    if (config.showGeometryTab) addTab(geometryTab, "Geometry");
+    if (config.showRadiiTab) addTab(radiiTab, "Radii");
+    if (config.showPassesTab) addTab(passesTab, "Passes");
 }

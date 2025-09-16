@@ -13,6 +13,38 @@
 
 #include "ToolTableDialog.h"
 
+struct OperationConfigVisibility {
+    // Tool tab
+    bool showToolSelector = true;
+    bool showRpmInput = true;
+    bool showFeedrateInput = true;
+
+    // Geometry tab
+    bool showGeometrySelection = true;
+    bool showAxialStartOffset = true;
+    bool showAxialEndOffset = true;
+
+    // Radii tab
+    bool showRetractDistance = true;
+    bool showClearanceDistance = true;
+    bool showFeedDistance = true;
+    bool showOuterDistance = true;
+    bool showInnerDistance = true;
+
+    // Passes tab
+    bool showStepover = true;
+    bool showCutDepthPerPass = true;
+    bool showSpringPasses = true;
+    bool showPeckDepth = true;
+    bool showDwellTime = true;
+
+    // Tab visibility
+    bool showToolTab = true;
+    bool showGeometryTab = true;
+    bool showRadiiTab = true;
+    bool showPassesTab = true;
+};
+
 
 class OperationConfigurationView : public QTabWidget {
     Q_OBJECT
@@ -42,10 +74,13 @@ class OperationConfigurationView : public QTabWidget {
     QDoubleSpinBox* peckDepthInput;
     QSpinBox* dwellTimeInput;
 
+    OperationConfigVisibility config;
+
     void setupUI();
 
     public:
-        OperationConfigurationView(QWidget *parent = nullptr);
+        explicit OperationConfigurationView(QWidget *parent = nullptr);
+        explicit OperationConfigurationView(const OperationConfigVisibility& visibilityConfig, QWidget *parent = nullptr);
         ~OperationConfigurationView() override = default;
 };
 
