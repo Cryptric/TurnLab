@@ -89,6 +89,8 @@ add_executable(TurnLab
         src/presenter/DXFImportPresenter.h
         src/presenter/MachineConfigPresenter.cpp
         src/presenter/MachineConfigPresenter.h
+        src/view/OperationConfigurationView.cpp
+        src/view/OperationConfigurationView.h
 )
 
 target_link_libraries(TurnLab

@@ -18,6 +18,7 @@
 #include "GeometryView.h"
 #include "ToolTableDialog.h"
 #include "LeftPanel.h"
+#include "OperationConfigurationView.h"
 #include "../model/Project.h"
 
 
@@ -34,6 +35,8 @@ private:
     QWidget* rightContentArea;
     QToolBar* ribbonBar;
     GeometryView* geometryView;
+
+    OperationConfigurationView* operationConfigView;
 
 
 public:
