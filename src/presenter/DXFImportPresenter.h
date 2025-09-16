@@ -7,9 +7,11 @@
 
 #include <QString>
 #include <memory>
+#include <optional>
 
 #include "Transform.h"
 #include "../model/MachineConfig.h"
+#include "../model/Project.h"
 #include "../view/DXFImportDialog.h"
 #include "../model/geometry/Geometry.h"
 #include "../model/StockMaterial.h"
@@ -47,10 +49,10 @@ public:
     ~DXFImportPresenter() = default;
     
     // Show the dialog and return the configuration result
-    void showDialog();
+    std::optional<Project> showDialog() const;
     
-    // Set geometry to preview
-    void setGeometry(const Geometry& geometry);
+    // Set geom to preview
+    void setGeometry(const Geometry& geom);
     
     // Load DXF file for preview
     bool loadDXFFile(const QString& filePath);

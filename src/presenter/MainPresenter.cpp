@@ -25,8 +25,15 @@ void MainPresenter::connectSignals() {
 }
 
 void MainPresenter::showDXFImportDialog(const std::string& inputDXF) {
-    DXFImportPresenter presenter(inputDXF, machineConfig, &window);
-    presenter.showDialog();
+    const DXFImportPresenter presenter(inputDXF, machineConfig, &window);
+    if (const std::optional<Project> p = presenter.showDialog(); p.has_value()) {
+        setProject(p.value());
+    }
+}
+
+void MainPresenter::setProject(Project p) {
+    project = std::make_unique<Project>(p);
+    window.setProject(*project.get());
 }
 
 void MainPresenter::showMachineConfigDialog() {

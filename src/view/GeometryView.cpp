@@ -9,6 +9,7 @@
 #include <spdlog/spdlog.h>
 #include <QPen>
 #include <QEvent>
+#include <QTimer>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_picker.h>
 #include <qwt_picker_machine.h>
@@ -45,14 +46,23 @@ GeometryView::GeometryView(const MachineConfig& config, QWidget *parent) : QwtPl
 }
 
 void GeometryView::setAxesOrientation() {
-    // Set directions
     if (machineConfig.zAxisDirection == AxisDirection::Negative) {
         setAxisScaleEngine(xBottom, new QwtLinearScaleEngine());
         axisScaleEngine(xBottom)->setAttribute(QwtScaleEngine::Inverted, true);
+        setAxisScale(xBottom, machineConfig.maxZTravel, 0.0);
+    } else {
+        setAxisScaleEngine(xBottom, new QwtLinearScaleEngine());
+        axisScaleEngine(xBottom)->setAttribute(QwtScaleEngine::Inverted, false);
+        setAxisScale(xBottom, 0.0, machineConfig.maxZTravel);
     }
     if (machineConfig.xAxisDirection == AxisDirection::Positive) {
         setAxisScaleEngine(yLeft, new QwtLinearScaleEngine());
         axisScaleEngine(yLeft)->setAttribute(QwtScaleEngine::Inverted, true);
+        setAxisScale(yLeft, machineConfig.maxXRadius, -machineConfig.maxXRadius);
+    } else {
+        setAxisScaleEngine(yLeft, new QwtLinearScaleEngine());
+        axisScaleEngine(yLeft)->setAttribute(QwtScaleEngine::Inverted, false);
+        setAxisScale(yLeft, -machineConfig.maxXRadius, machineConfig.maxXRadius);
     }
     replot();
 }

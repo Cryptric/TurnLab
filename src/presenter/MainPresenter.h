@@ -20,6 +20,8 @@ class MainPresenter : public QObject {
 
     MainWindow window;
 
+    std::unique_ptr<Project> project;
+
     void connectSignals();
     MachineConfig loadMachineConfig();
     void saveMachineConfig();
@@ -27,6 +29,8 @@ class MainPresenter : public QObject {
 
     void showMachineConfigDialog();
     void showDXFImportDialog(const std::string& inputDXF);
+
+    void setProject(Project p);
 
 public:
     MainPresenter();

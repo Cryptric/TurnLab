@@ -55,6 +55,7 @@ add_library(TurnLabCore STATIC
         src/model/geometry/Transform.cpp
         src/model/geometry/Transform.h
         src/model/StockMaterial.h
+        src/model/Project.h
 )
 
 target_include_directories(TurnLabCore PUBLIC

@@ -7,7 +7,9 @@
 
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QFileDialog>
 #include <spdlog/spdlog.h>
+
 
 #include "Line.h"
 #include "../model/MachineConfig.h"
@@ -49,19 +51,35 @@ void DXFImportPresenter::connectSignals() {
     connect(dialog.get(), &DXFImportDialog::importCancelled, this, &DXFImportPresenter::onImportCancelled);
 }
 
-void DXFImportPresenter::showDialog() {
-    dialog->exec();
+std::optional<Project> DXFImportPresenter::showDialog() const {
+    int result = dialog->exec();
+
+    // get path where to save project
+    QString projectFilePath = QFileDialog::getSaveFileName(nullptr, "Save Project", "", "TurnLab project file (*.turnlab)");
+
+    if (result == QDialog::Accepted && !projectFilePath.isEmpty()) {
+        // Import button was pressed
+        Project project = {
+            .savePath = projectFilePath.toStdString(),
+            .geometry = geometry->transform(transformations),
+            .stockMaterial = stockMaterial
+        };
+        return project;
+    } else {
+        // Cancel or close was pressed
+        return {}; // Return empty project
+    }
 }
 
-void DXFImportPresenter::setGeometry(const Geometry& geometry) {
-    this->geometry = std::make_unique<Geometry>(geometry);
+void DXFImportPresenter::setGeometry(const Geometry& geom) {
+    this->geometry = std::make_unique<Geometry>(geom);
     updateGeometryPreview();
 }
 
 bool DXFImportPresenter::loadDXFFile(const QString& filePath) {
     try {
         // Check if file exists
-        QFileInfo fileInfo(filePath);
+        const QFileInfo fileInfo(filePath);
         if (!fileInfo.exists() || !fileInfo.isReadable()) {
             return false;
         }

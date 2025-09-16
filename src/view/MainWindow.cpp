@@ -81,3 +81,9 @@ void MainWindow::showToolTable() {
     ToolTableDialog dialog(this);
     dialog.exec();
 }
+
+void MainWindow::setProject(const Project& project) const {
+    geometryView->setGeometry(project.geometry);
+    geometryView->plotStock(project.stockMaterial);
+    geometryView->replot();
+}

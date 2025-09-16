@@ -18,6 +18,7 @@
 #include "GeometryView.h"
 #include "ToolTableDialog.h"
 #include "LeftPanel.h"
+#include "../model/Project.h"
 
 
 class MainWindow : public QMainWindow {
@@ -38,6 +39,8 @@ private:
 public:
     explicit MainWindow(const MachineConfig& config, QWidget *parent = nullptr);
     ~MainWindow();
+
+    void setProject(const Project& project) const;
 
 private slots:
     void showToolTable();
