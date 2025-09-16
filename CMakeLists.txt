@@ -56,6 +56,7 @@ add_library(TurnLabCore STATIC
         src/model/geometry/Transform.h
         src/model/StockMaterial.h
         src/model/Project.h
+        src/model/Tool.h
 )
 
 target_include_directories(TurnLabCore PUBLIC
@@ -71,11 +72,11 @@ target_link_libraries(TurnLabCore PUBLIC
 
 qt6_add_resources(QT_RESOURCES resources.qrc)
 
-add_executable(TurnLab 
-        src/main.cpp 
-        src/view/MainWindow.cpp 
-        src/view/ToolTableDialog.cpp 
-        src/view/LeftPanel.cpp 
+add_executable(TurnLab
+        src/main.cpp
+        src/view/MainWindow.cpp
+        src/view/ToolTableDialog.cpp
+        src/view/LeftPanel.cpp
         src/view/GeometryView.cpp
         src/view/GeometryView.h
         src/view/DXFImportDialog.cpp
@@ -91,6 +92,7 @@ add_executable(TurnLab
         src/presenter/MachineConfigPresenter.h
         src/view/OperationConfigurationView.cpp
         src/view/OperationConfigurationView.h
+        src/utils/ConfigurationManager.cpp
 )
 
 target_link_libraries(TurnLab

@@ -20,6 +20,7 @@
 #include "LeftPanel.h"
 #include "OperationConfigurationView.h"
 #include "../model/Project.h"
+#include "../model/Tool.h"
 
 
 class MainWindow : public QMainWindow {
@@ -27,6 +28,7 @@ class MainWindow : public QMainWindow {
 
 private:
     const MachineConfig& machineConfig;
+    const ToolTable& toolTable;
 
     QWidget* centralWidget;
     QVBoxLayout* mainLayout;
@@ -40,7 +42,7 @@ private:
 
 
 public:
-    explicit MainWindow(const MachineConfig& config, QWidget *parent = nullptr);
+    explicit MainWindow(const MachineConfig& config, const ToolTable& tools, QWidget *parent = nullptr);
     ~MainWindow();
 
     void setProject(const Project& project) const;

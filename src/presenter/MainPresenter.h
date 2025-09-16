@@ -17,15 +17,13 @@ class MainPresenter : public QObject {
     Q_OBJECT
 
     MachineConfig machineConfig;
+    ToolTable toolTable;
 
     MainWindow window;
 
     std::unique_ptr<Project> project;
 
     void connectSignals();
-    MachineConfig loadMachineConfig();
-    void saveMachineConfig();
-    std::filesystem::path getConfigPath();
 
     void showMachineConfigDialog();
     void showDXFImportDialog(const std::string& inputDXF);

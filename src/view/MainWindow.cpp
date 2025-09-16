@@ -8,8 +8,8 @@
 #include <QStyle>
 #include <QSplitter>
 
-MainWindow::MainWindow(const MachineConfig& config, QWidget *parent)
-    : machineConfig(config), QMainWindow(parent), centralWidget(nullptr), mainLayout(nullptr), mainSplitter(nullptr), leftPanel(nullptr), rightContentArea(nullptr), ribbonBar(nullptr) {
+MainWindow::MainWindow(const MachineConfig& config, const ToolTable& tools, QWidget *parent)
+    : machineConfig(config), toolTable(tools), QMainWindow(parent), centralWidget(nullptr), mainLayout(nullptr), mainSplitter(nullptr), leftPanel(nullptr), rightContentArea(nullptr), ribbonBar(nullptr) {
     setupUI();
     resize(1920, 1080);
 }
