@@ -30,20 +30,25 @@ void OperationConfigurationView::setupUI() {
 
     // Create vertical layouts for each tab
     QFormLayout* passesLayout = new QFormLayout(passesTab);
+    passesLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
 
     // Setup tool tab
     QFormLayout* toolFormLayout = new QFormLayout(toolTab);
+    toolFormLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
 
     toolSelector = new QComboBox();
+    toolSelector->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     rpmInput = new QSpinBox();
     rpmInput->setRange(100, 10000);
     rpmInput->setSuffix(" RPM");
     rpmInput->setValue(1000);
+    rpmInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     feedrateInput = new QSpinBox();
     feedrateInput->setRange(1, 1000);
     feedrateInput->setSuffix(" mm/min");
     feedrateInput->setValue(100);
+    feedrateInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     if (config.showToolSelector) toolFormLayout->addRow("Tool:", toolSelector);
     if (config.showRpmInput) toolFormLayout->addRow("RPM:", rpmInput);
@@ -51,50 +56,60 @@ void OperationConfigurationView::setupUI() {
 
     // Setup geometry tab
     QFormLayout* geometryLayout = new QFormLayout(geometryTab);
+    geometryLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
 
     geometrySelectionButton = new QPushButton("Select Geometry");
     geometrySelectionButton->setCheckable(true);
+    geometrySelectionButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     if (config.showGeometrySelection) geometryLayout->addRow("Geometry Selection:", geometrySelectionButton);
 
     axialStartOffset = new QSpinBox();
     axialStartOffset->setRange(-1000, 1000);
     axialStartOffset->setSuffix(" mm");
     axialStartOffset->setValue(0);
+    axialStartOffset->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     if (config.showAxialStartOffset) geometryLayout->addRow("Axial Start Offset:", axialStartOffset);
 
     axialEndOffset = new QSpinBox();
     axialEndOffset->setRange(-1000, 1000);
     axialEndOffset->setSuffix(" mm");
     axialEndOffset->setValue(0);
+    axialEndOffset->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     if (config.showAxialEndOffset) geometryLayout->addRow("Axial End Offset:", axialEndOffset);
 
     // Setup radii tab
     QFormLayout* radiiFormLayout = new QFormLayout(radiiTab);
+    radiiFormLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
 
     retractDistanceInput = new QSpinBox();
     retractDistanceInput->setRange(0, 100);
     retractDistanceInput->setSuffix(" mm");
     retractDistanceInput->setValue(5);
+    retractDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     clearanceDistanceInput = new QSpinBox();
     clearanceDistanceInput->setRange(0, 100);
     clearanceDistanceInput->setSuffix(" mm");
     clearanceDistanceInput->setValue(2);
+    clearanceDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     feedDistanceInput = new QSpinBox();
     feedDistanceInput->setRange(0, 100);
     feedDistanceInput->setSuffix(" mm");
     feedDistanceInput->setValue(1);
+    feedDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     outerDistanceInput = new QSpinBox();
     outerDistanceInput->setRange(0, 100);
     outerDistanceInput->setSuffix(" mm");
     outerDistanceInput->setValue(10);
+    outerDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     innerDistanceInput = new QSpinBox();
     innerDistanceInput->setRange(0, 100);
     innerDistanceInput->setSuffix(" mm");
     innerDistanceInput->setValue(5);
+    innerDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     if (config.showRetractDistance) radiiFormLayout->addRow("Retract Distance:", retractDistanceInput);
     if (config.showClearanceDistance) radiiFormLayout->addRow("Clearance Distance:", clearanceDistanceInput);
@@ -108,27 +123,32 @@ void OperationConfigurationView::setupUI() {
     stepoverInput->setSuffix(" mm");
     stepoverInput->setDecimals(2);
     stepoverInput->setValue(5.0);
+    stepoverInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     cutDepthPerPassInput = new QDoubleSpinBox();
     cutDepthPerPassInput->setRange(0.1, 50.0);
     cutDepthPerPassInput->setSuffix(" mm");
     cutDepthPerPassInput->setDecimals(2);
     cutDepthPerPassInput->setValue(2.0);
+    cutDepthPerPassInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     springPassesInput = new QSpinBox();
     springPassesInput->setRange(0, 10);
     springPassesInput->setValue(1);
+    springPassesInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     peckDepthInput = new QDoubleSpinBox();
     peckDepthInput->setRange(0.1, 20.0);
     peckDepthInput->setSuffix(" mm");
     peckDepthInput->setDecimals(2);
     peckDepthInput->setValue(3.0);
+    peckDepthInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     dwellTimeInput = new QSpinBox();
     dwellTimeInput->setRange(0, 10000);
     dwellTimeInput->setSuffix(" ms");
     dwellTimeInput->setValue(500);
+    dwellTimeInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     if (config.showStepover) passesLayout->addRow("Stepover:", stepoverInput);
     if (config.showCutDepthPerPass) passesLayout->addRow("Cut Depth per Pass:", cutDepthPerPassInput);
