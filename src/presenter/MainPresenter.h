@@ -10,6 +10,7 @@
 
 #include "../view/MainWindow.h"
 #include "DXFImportPresenter.h"
+#include "OperationConfigurationPresenter.h"
 #include "../model/MachineConfig.h"
 
 
@@ -22,6 +23,8 @@ class MainPresenter : public QObject {
     MainWindow window;
 
     std::unique_ptr<Project> project;
+
+    std::unique_ptr<OperationConfigurationPresenter> operationConfigPresenter;
 
     void connectSignals();
 

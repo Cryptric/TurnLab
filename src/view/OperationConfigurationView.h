@@ -11,7 +11,7 @@
 #include <QTabWidget>
 #include <QPushButton>
 
-#include "ToolTableDialog.h"
+#include "../model/Tool.h"
 
 struct OperationConfigVisibility {
     // Tool tab
@@ -82,6 +82,36 @@ class OperationConfigurationView : public QTabWidget {
         explicit OperationConfigurationView(QWidget *parent = nullptr);
         explicit OperationConfigurationView(const OperationConfigVisibility& visibilityConfig, QWidget *parent = nullptr);
         ~OperationConfigurationView() override = default;
+
+        void setToolTable(const ToolTable& toolTable);
+
+    signals:
+        // Tool tab signals
+        void toolSelectionChanged(int toolNumber);
+        void rpmChanged(int rpm);
+        void feedrateChanged(int feedrate);
+
+        // Geometry tab signals
+        void geometrySelectionToggled(bool enabled);
+        void axialStartOffsetChanged(int offset);
+        void axialEndOffsetChanged(int offset);
+
+        // Radii tab signals
+        void retractDistanceChanged(int distance);
+        void clearanceDistanceChanged(int distance);
+        void feedDistanceChanged(int distance);
+        void outerDistanceChanged(int distance);
+        void innerDistanceChanged(int distance);
+
+        // Passes tab signals
+        void stepoverChanged(double stepover);
+        void cutDepthPerPassChanged(double depth);
+        void springPassesChanged(int passes);
+        void peckDepthChanged(double depth);
+        void dwellTimeChanged(int time);
+
+    private:
+        void connectSignals();
 };
 
 

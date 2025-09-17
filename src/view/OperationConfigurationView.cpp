@@ -12,11 +12,13 @@
 
 OperationConfigurationView::OperationConfigurationView(QWidget* parent) : QTabWidget(parent) {
     setupUI();
+    connectSignals();
 }
 
 OperationConfigurationView::OperationConfigurationView(const OperationConfigVisibility& visibilityConfig, QWidget* parent)
     : QTabWidget(parent), config(visibilityConfig) {
     setupUI();
+    connectSignals();
 }
 
 void OperationConfigurationView::setupUI() {
@@ -139,4 +141,75 @@ void OperationConfigurationView::setupUI() {
     if (config.showGeometryTab) addTab(geometryTab, "Geometry");
     if (config.showRadiiTab) addTab(radiiTab, "Radii");
     if (config.showPassesTab) addTab(passesTab, "Passes");
+}
+
+void OperationConfigurationView::connectSignals() {
+    // Tool tab connections
+    connect(toolSelector, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, [this](int index) {
+                int toolNumber = toolSelector->itemData(index).toInt();
+                emit toolSelectionChanged(toolNumber);
+            });
+
+    connect(rpmInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::rpmChanged);
+
+    connect(feedrateInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::feedrateChanged);
+
+    // Geometry tab connections
+    connect(geometrySelectionButton, &QPushButton::toggled,
+            this, &OperationConfigurationView::geometrySelectionToggled);
+
+    connect(axialStartOffset, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::axialStartOffsetChanged);
+
+    connect(axialEndOffset, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::axialEndOffsetChanged);
+
+    // Radii tab connections
+    connect(retractDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::retractDistanceChanged);
+
+    connect(clearanceDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::clearanceDistanceChanged);
+
+    connect(feedDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::feedDistanceChanged);
+
+    connect(outerDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::outerDistanceChanged);
+
+    connect(innerDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::innerDistanceChanged);
+
+    // Passes tab connections
+    connect(stepoverInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &OperationConfigurationView::stepoverChanged);
+
+    connect(cutDepthPerPassInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &OperationConfigurationView::cutDepthPerPassChanged);
+
+    connect(springPassesInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::springPassesChanged);
+
+    connect(peckDepthInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &OperationConfigurationView::peckDepthChanged);
+
+    connect(dwellTimeInput, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &OperationConfigurationView::dwellTimeChanged);
+}
+
+void OperationConfigurationView::setToolTable(const ToolTable& toolTable) {
+    toolSelector->clear();
+
+    for (const auto& tool : toolTable.tools) {
+        toolSelector->addItem(
+            QString("T%1 - %2 (%3)")
+                .arg(tool.number)
+                .arg(QString::fromStdString(tool.description))
+                .arg(QString::fromStdString(tool.isoCode)),
+            tool.number
+        );
+    }
 }
