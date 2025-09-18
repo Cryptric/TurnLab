@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <nlohmann/json.hpp>
 
 #include "Point.h"
 #include "Segment.h"
@@ -27,6 +28,8 @@ public:
     bool operator!=(const Segment& other) const;
     std::unique_ptr<Segment> transform(const std::vector<Transform>& transformations) override;
     std::unique_ptr<Segment> clone() const override;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Line, p1, p2)
 };
 
 #endif //TURNLAB_LINE_H

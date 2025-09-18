@@ -22,6 +22,43 @@ enum class OperationConfigTab {
 
 class OperationConfigurationPresenter : public QObject {
     Q_OBJECT
+private:
+    const OperationConfigVisibility visibilityConfig;
+    const MachineConfig& machineConfig;
+    const ToolTable& toolTable;
+    GeometryView& geometryView;
+    OperationConfigurationView& configView;
+    OperationConfiguration operationConfig;
+
+    bool geometrySelectionEnabled = false;
+
+    void connectSignals();
+    void populateToolSelector();
+    void applyConfiguration();
+
+signals:
+    void configurationChanged();
+
+
+private slots:
+    void onTabChanged(OperationConfigTab tab);
+    void onGeometrySelectionToggled(bool checked);
+    void onSegmentSelected(size_t index);
+    void onToolSelectionChanged(int toolNumber);
+    void onRpmChanged(int rpm);
+    void onFeedrateChanged(int feedrate);
+    void onAxialStartOffsetChanged(int offset);
+    void onAxialEndOffsetChanged(int offset);
+    void onRetractDistanceChanged(int distance);
+    void onClearanceDistanceChanged(int distance);
+    void onFeedDistanceChanged(int distance);
+    void onOuterDistanceChanged(int distance);
+    void onInnerDistanceChanged(int distance);
+    void onStepoverChanged(double stepover);
+    void onCutDepthPerPassChanged(double depth);
+    void onSpringPassesChanged(int passes);
+    void onPeckDepthChanged(double depth);
+    void onDwellTimeChanged(int time);
 
 public:
     explicit OperationConfigurationPresenter(
@@ -39,39 +76,6 @@ public:
     OperationConfigVisibility getVisibilityConfig() const;
     const OperationConfiguration& getOperationConfiguration() const;
 
-private slots:
-    void onTabChanged(OperationConfigTab tab);
-    void onGeometrySelectionToggled(bool checked);
-    void onToolSelectionChanged(int toolNumber);
-    void onRpmChanged(int rpm);
-    void onFeedrateChanged(int feedrate);
-    void onAxialStartOffsetChanged(int offset);
-    void onAxialEndOffsetChanged(int offset);
-    void onRetractDistanceChanged(int distance);
-    void onClearanceDistanceChanged(int distance);
-    void onFeedDistanceChanged(int distance);
-    void onOuterDistanceChanged(int distance);
-    void onInnerDistanceChanged(int distance);
-    void onStepoverChanged(double stepover);
-    void onCutDepthPerPassChanged(double depth);
-    void onSpringPassesChanged(int passes);
-    void onPeckDepthChanged(double depth);
-    void onDwellTimeChanged(int time);
-
-private:
-    const OperationConfigVisibility visibilityConfig;
-    const MachineConfig& machineConfig;
-    const ToolTable& toolTable;
-    GeometryView& geometryView;
-    OperationConfigurationView& configView;
-    OperationConfiguration operationConfig;
-
-    void connectSignals();
-    void populateToolSelector();
-    void applyConfiguration();
-
-signals:
-    void configurationChanged();
 };
 
 #endif //TURNLAB_OPERATIONCONFIGURATIONPRESENTER_H

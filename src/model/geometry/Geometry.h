@@ -6,6 +6,7 @@
 #define TURNLAB_GEOMETRY_H
 
 #include <vector>
+#include <nlohmann/json.hpp>
 
 #include "Segment.h"
 #include "Transform.h"
@@ -27,5 +28,9 @@ public:
 
     std::vector<std::unique_ptr<Segment>> segments;
 };
+
+// Custom JSON serialization for Geometry
+void to_json(nlohmann::json& j, const Geometry& g);
+void from_json(const nlohmann::json& j, Geometry& g);
 
 #endif //TURNLAB_GEOMETRY_H

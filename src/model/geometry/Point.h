@@ -6,6 +6,7 @@
 #define TURNLAB_POINT_H
 
 #include <vector>
+#include <nlohmann/json.hpp>
 
 #include "Transform.h"
 
@@ -33,6 +34,8 @@ public:
     bool operator!=(const Point& other) const;
 
     operator std::vector<double>() const;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Point, x, y)
 };
 
 #endif //TURNLAB_POINT_H

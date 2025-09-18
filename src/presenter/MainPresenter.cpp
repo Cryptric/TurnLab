@@ -31,7 +31,10 @@ void MainPresenter::showDXFImportDialog(const std::string& inputDXF) {
 
 void MainPresenter::setProject(Project p) {
     project = std::make_unique<Project>(p);
-    window.setProject(*project.get());
+    window.setProject(*project);
+    if (!p.savePath.empty()) {
+        saveProject(*project, p.savePath);
+    }
 }
 
 void MainPresenter::showMachineConfigDialog() {

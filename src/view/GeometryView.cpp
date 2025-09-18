@@ -178,6 +178,10 @@ void GeometryView::setSelectedSegments(const std::vector<size_t> &selectedSegmen
         segmentPlots[selectedIndex]->setPen(selectedPen);
     }
     selectedSegments = selectedSegmentIndices;
+    if (std::ranges::find(selectedSegments, hoveredSegmentIndex) != selectedSegments.end()) {
+        hoverPenCopy = selectedPen;
+    }
+    replot();
 }
 
 long long GeometryView::getSegmentAtPoint(const QPointF& point) const {

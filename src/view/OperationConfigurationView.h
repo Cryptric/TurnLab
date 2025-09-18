@@ -12,39 +12,7 @@
 #include <QPushButton>
 
 #include "../model/Tool.h"
-
-struct OperationConfigVisibility {
-    // Tool tab
-    bool showToolSelector = true;
-    bool showRpmInput = true;
-    bool showFeedrateInput = true;
-
-    // Geometry tab
-    bool showGeometrySelection = true;
-    bool showAxialStartOffset = true;
-    bool showAxialEndOffset = true;
-
-    // Radii tab
-    bool showRetractDistance = true;
-    bool showClearanceDistance = true;
-    bool showFeedDistance = true;
-    bool showOuterDistance = true;
-    bool showInnerDistance = true;
-
-    // Passes tab
-    bool showStepover = true;
-    bool showCutDepthPerPass = true;
-    bool showSpringPasses = true;
-    bool showPeckDepth = true;
-    bool showDwellTime = true;
-
-    // Tab visibility
-    bool showToolTab = true;
-    bool showGeometryTab = true;
-    bool showRadiiTab = true;
-    bool showPassesTab = true;
-};
-
+#include "../model/operation/OperationConfiguration.h"
 
 class OperationConfigurationView : public QTabWidget {
     Q_OBJECT

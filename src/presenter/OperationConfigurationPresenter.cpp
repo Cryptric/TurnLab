@@ -41,6 +41,7 @@ void OperationConfigurationPresenter::connectSignals() {
     // Connect geometry tab signals
     connect(&configView, &OperationConfigurationView::geometrySelectionToggled,
             this, &OperationConfigurationPresenter::onGeometrySelectionToggled);
+    connect(&geometryView, &GeometryView::segmentSelected, this, &OperationConfigurationPresenter::onSegmentSelected);
     connect(&configView, &OperationConfigurationView::axialStartOffsetChanged,
             this, &OperationConfigurationPresenter::onAxialStartOffsetChanged);
     connect(&configView, &OperationConfigurationView::axialEndOffsetChanged,
@@ -99,17 +100,20 @@ const OperationConfiguration& OperationConfigurationPresenter::getOperationConfi
 
 void OperationConfigurationPresenter::onGeometrySelectionToggled(bool checked) {
     spdlog::debug("Geometry selection toggled: {}", checked);
-    operationConfig.geometrySelection = checked;
+    geometrySelectionEnabled = checked;
 
-    if (checked) {
-        geometryView.enablePointPicking();
-        spdlog::info("Geometry selection enabled - click on geometry to select");
-    } else {
-        geometryView.disablePointPicking();
-        spdlog::info("Geometry selection disabled");
+}
+
+void OperationConfigurationPresenter::onSegmentSelected(size_t segmentIndex) {
+    if (geometrySelectionEnabled) {
+        spdlog::debug("Segment {} selected", segmentIndex);
+        if (visibilityConfig.singleSegmentSelection) {
+            operationConfig.geometrySelection = {segmentIndex};
+        } else {
+            operationConfig.geometrySelection.push_back(segmentIndex);
+        }
+        geometryView.setSelectedSegments(operationConfig.geometrySelection);
     }
-
-    emit configurationChanged();
 }
 
 void OperationConfigurationPresenter::onToolSelectionChanged(int toolNumber) {

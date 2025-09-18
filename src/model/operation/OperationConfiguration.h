@@ -12,7 +12,7 @@ struct OperationConfiguration {
     int feedrate = 100;  // mm/min
 
     // Geometry configuration
-    bool geometrySelection = false;
+    std::vector<size_t> geometrySelection = {};
     int axialStartOffset = 0;  // mm
     int axialEndOffset = 0;    // mm
 
@@ -29,6 +29,39 @@ struct OperationConfiguration {
     int springPasses = 1;
     double peckDepth = 3.0;         // mm
     int dwellTime = 500;            // ms
+};
+
+struct OperationConfigVisibility {
+    // Tool tab
+    bool showToolSelector = true;
+    bool showRpmInput = true;
+    bool showFeedrateInput = true;
+
+    // Geometry tab
+    bool showGeometrySelection = true;
+    bool singleSegmentSelection = true;
+    bool showAxialStartOffset = true;
+    bool showAxialEndOffset = true;
+
+    // Radii tab
+    bool showRetractDistance = true;
+    bool showClearanceDistance = true;
+    bool showFeedDistance = true;
+    bool showOuterDistance = true;
+    bool showInnerDistance = true;
+
+    // Passes tab
+    bool showStepover = true;
+    bool showCutDepthPerPass = true;
+    bool showSpringPasses = true;
+    bool showPeckDepth = true;
+    bool showDwellTime = true;
+
+    // Tab visibility
+    bool showToolTab = true;
+    bool showGeometryTab = true;
+    bool showRadiiTab = true;
+    bool showPassesTab = true;
 };
 
 #endif //TURNLAB_OPERATIONCONFIGURATION_H
