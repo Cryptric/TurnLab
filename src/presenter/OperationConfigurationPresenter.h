@@ -9,6 +9,7 @@
 
 #include "../view/OperationConfigurationView.h"
 #include "../view/GeometryView.h"
+#include "../view/OperationConfigurationPlotHelper.h"
 #include "../model/MachineConfig.h"
 #include "../model/Tool.h"
 #include "../model/operation/OperationConfiguration.h"
@@ -23,12 +24,14 @@ enum class OperationConfigTab {
 class OperationConfigurationPresenter : public QObject {
     Q_OBJECT
 private:
+    OperationConfiguration operationConfig = OperationConfiguration();
+
     const OperationConfigVisibility visibilityConfig;
     const MachineConfig& machineConfig;
     const ToolTable& toolTable;
     GeometryView& geometryView;
     OperationConfigurationView& configView;
-    OperationConfiguration operationConfig;
+    OperationConfigurationPlotHelper plotHelper;
 
     bool geometrySelectionEnabled = false;
 
@@ -62,7 +65,7 @@ private slots:
 
 public:
     explicit OperationConfigurationPresenter(
-        const OperationConfigVisibility& visibilityConfig,
+        const OperationConfigVisibility& opVisibilityConfig,
         const MachineConfig& machineConfig,
         const ToolTable& toolTable,
         GeometryView& geometryView,

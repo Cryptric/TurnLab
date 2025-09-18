@@ -97,6 +97,8 @@ add_executable(TurnLab
         src/presenter/OperationConfigurationPresenter.cpp
         src/utils/ProjectUtils.h
         src/utils/ProjectUtils.cpp
+        src/view/OperationConfigurationPlotHelper.cpp
+        src/view/OperationConfigurationPlotHelper.h
 )
 
 target_link_libraries(TurnLab

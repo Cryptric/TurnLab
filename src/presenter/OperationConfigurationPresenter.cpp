@@ -6,18 +6,19 @@
 #include <spdlog/spdlog.h>
 
 OperationConfigurationPresenter::OperationConfigurationPresenter(
-    const OperationConfigVisibility& visibilityConfig,
+    const OperationConfigVisibility& opVisibilityConfig,
     const MachineConfig& machineConfig,
     const ToolTable& toolTable,
     GeometryView& geometryView,
     OperationConfigurationView& operationConfigView,
     QObject* parent)
     : QObject(parent)
-    , visibilityConfig(visibilityConfig)
+    , visibilityConfig(opVisibilityConfig)
     , machineConfig(machineConfig)
     , toolTable(toolTable)
     , geometryView(geometryView)
     , configView(operationConfigView)
+    , plotHelper(visibilityConfig, operationConfig, geometryView)
 {
     spdlog::debug("Creating OperationConfigurationPresenter");
     populateToolSelector();
@@ -137,42 +138,49 @@ void OperationConfigurationPresenter::onFeedrateChanged(int feedrate) {
 void OperationConfigurationPresenter::onAxialStartOffsetChanged(int offset) {
     spdlog::debug("Axial start offset changed to: {}", offset);
     operationConfig.axialStartOffset = offset;
+    plotHelper.update();
     emit configurationChanged();
 }
 
 void OperationConfigurationPresenter::onAxialEndOffsetChanged(int offset) {
     spdlog::debug("Axial end offset changed to: {}", offset);
     operationConfig.axialEndOffset = offset;
+    plotHelper.update();
     emit configurationChanged();
 }
 
 void OperationConfigurationPresenter::onRetractDistanceChanged(int distance) {
     spdlog::debug("Retract distance changed to: {}", distance);
     operationConfig.retractDistance = distance;
+    plotHelper.update();
     emit configurationChanged();
 }
 
 void OperationConfigurationPresenter::onClearanceDistanceChanged(int distance) {
     spdlog::debug("Clearance distance changed to: {}", distance);
     operationConfig.clearanceDistance = distance;
+    plotHelper.update();
     emit configurationChanged();
 }
 
 void OperationConfigurationPresenter::onFeedDistanceChanged(int distance) {
     spdlog::debug("Feed distance changed to: {}", distance);
     operationConfig.feedDistance = distance;
+    plotHelper.update();
     emit configurationChanged();
 }
 
 void OperationConfigurationPresenter::onOuterDistanceChanged(int distance) {
     spdlog::debug("Outer distance changed to: {}", distance);
     operationConfig.outerDistance = distance;
+    plotHelper.update();
     emit configurationChanged();
 }
 
 void OperationConfigurationPresenter::onInnerDistanceChanged(int distance) {
     spdlog::debug("Inner distance changed to: {}", distance);
     operationConfig.innerDistance = distance;
+    plotHelper.update();
     emit configurationChanged();
 }
 
@@ -210,15 +218,25 @@ void OperationConfigurationPresenter::onTabChanged(OperationConfigTab tab) {
     switch (tab) {
         case OperationConfigTab::Tool:
             spdlog::debug("Tab changed to Tool");
+            plotHelper.hideDistanceMarkers();
+            plotHelper.hideAxialOffsetMarkers();
             break;
         case OperationConfigTab::Geometry:
             spdlog::debug("Tab changed to Geometry");
+            plotHelper.hideDistanceMarkers();
+            plotHelper.update();
+            plotHelper.showAxialOffsetMarkers();
             break;
         case OperationConfigTab::Radii:
             spdlog::debug("Tab changed to Radii");
+            plotHelper.hideAxialOffsetMarkers();
+            plotHelper.update();
+            plotHelper.showDistanceMarkers();
             break;
         case OperationConfigTab::Passes:
             spdlog::debug("Tab changed to Passes");
+            plotHelper.hideDistanceMarkers();
+            plotHelper.hideAxialOffsetMarkers();
             break;
     }
 }
