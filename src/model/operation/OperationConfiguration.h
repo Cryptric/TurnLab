@@ -36,35 +36,35 @@ struct OperationConfiguration {
 
 struct OperationConfigVisibility {
     // Tool tab
-    bool showToolSelector = true;
-    bool showRpmInput = true;
-    bool showFeedrateInput = true;
+    bool showToolSelector = false;
+    bool showRpmInput = false;
+    bool showFeedrateInput = false;
 
     // Geometry tab
-    bool showGeometrySelection = true;
-    bool singleSegmentSelection = true;
-    bool showAxialStartOffset = true;
-    bool showAxialEndOffset = true;
+    bool showGeometrySelection = false;
+    bool singleSegmentSelection = false;
+    bool showAxialStartOffset = false;
+    bool showAxialEndOffset = false;
 
     // Radii tab
-    bool showRetractDistance = true;
-    bool showClearanceDistance = true;
-    bool showFeedDistance = true;
-    bool showOuterDistance = true;
-    bool showInnerDistance = true;
+    bool showRetractDistance = false;
+    bool showClearanceDistance = false;
+    bool showFeedDistance = false;
+    bool showOuterDistance = false;
+    bool showInnerDistance = false;
 
     // Passes tab
-    bool showStepover = true;
-    bool showCutDepthPerPass = true;
-    bool showSpringPasses = true;
-    bool showPeckDepth = true;
-    bool showDwellTime = true;
+    bool showStepover = false;
+    bool showCutDepthPerPass = false;
+    bool showSpringPasses = false;
+    bool showPeckDepth = false;
+    bool showDwellTime = false;
 
     // Tab visibility
-    bool showToolTab = true;
-    bool showGeometryTab = true;
-    bool showRadiiTab = true;
-    bool showPassesTab = true;
+    bool showToolTab = false;
+    bool showGeometryTab = false;
+    bool showRadiiTab = false;
+    bool showPassesTab = false;
 };
 
 #endif //TURNLAB_OPERATIONCONFIGURATION_H

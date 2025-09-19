@@ -44,3 +44,7 @@ double Line::distance(const Point &point) const {
         return std::abs((q[1] * b[0] - q[0] * b[1]) / b.norm());
     }
 }
+
+bool Line::isVertical() const {
+    return p1.x == p2.x;
+}

@@ -99,6 +99,10 @@ add_executable(TurnLab
         src/utils/ProjectUtils.cpp
         src/view/OperationConfigurationPlotHelper.cpp
         src/view/OperationConfigurationPlotHelper.h
+        src/presenter/operation/FacingOperationPresenter.cpp
+        src/presenter/operation/FacingOperationPresenter.h
+        src/utils/GeometryUtils.cpp
+        src/utils/GeometryUtils.h
 )
 
 target_link_libraries(TurnLab

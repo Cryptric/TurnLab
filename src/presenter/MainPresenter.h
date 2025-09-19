@@ -24,13 +24,18 @@ class MainPresenter : public QObject {
 
     std::unique_ptr<Project> project;
 
-    std::unique_ptr<OperationConfigurationPresenter> operationConfigPresenter;
+    std::unique_ptr<OperationConfigurationView> currentOpConfigView;
+    std::unique_ptr<OperationConfigurationPresenter> currentOpConfigPresenter;
 
     void connectSignals();
 
     void showMachineConfigDialog();
     void showDXFImportDialog(std::string inputDXF="");
 
+private slots:
+    void onFacingPressed();
+    void onOperationConfigOkPressed();
+    void onOperationConfigCancelPressed();
 
 public:
     MainPresenter();

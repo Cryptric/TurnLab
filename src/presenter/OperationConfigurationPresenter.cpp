@@ -9,6 +9,7 @@ OperationConfigurationPresenter::OperationConfigurationPresenter(
     const OperationConfigVisibility& opVisibilityConfig,
     const MachineConfig& machineConfig,
     const ToolTable& toolTable,
+    const Geometry& geometry,
     GeometryView& geometryView,
     OperationConfigurationView& operationConfigView,
     QObject* parent)
@@ -16,6 +17,7 @@ OperationConfigurationPresenter::OperationConfigurationPresenter(
     , visibilityConfig(opVisibilityConfig)
     , machineConfig(machineConfig)
     , toolTable(toolTable)
+    , geometry(geometry)
     , geometryView(geometryView)
     , configView(operationConfigView)
     , plotHelper(visibilityConfig, operationConfig, geometryView)

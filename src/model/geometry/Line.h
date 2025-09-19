@@ -24,6 +24,9 @@ public:
     ~Line() override = default;
 
     double distance(const Point& point) const override;
+
+    bool isVertical() const;
+
     bool operator==(const Segment& other) const override;
     bool operator!=(const Segment& other) const;
     std::unique_ptr<Segment> transform(const std::vector<Transform>& transformations) override;

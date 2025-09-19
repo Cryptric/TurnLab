@@ -34,11 +34,20 @@ private:
     QVBoxLayout* mainLayout;
     QSplitter* mainSplitter;
     LeftPanel* leftPanel;
+    QWidget* currentLeftWidget;
     QWidget* rightContentArea;
     QToolBar* ribbonBar;
     GeometryView* geometryView;
 
     OperationConfigurationView* operationConfigView;
+
+    // Operation actions
+    QAction* facingAction;
+    QAction* turningAction;
+    QAction* contouringAction;
+    QAction* threadingAction;
+    QAction* partingAction;
+    QAction* drillingAction;
 
 
 public:
@@ -46,6 +55,14 @@ public:
     ~MainWindow();
 
     void setProject(const Project& project) const;
+
+    GeometryView &getGeometryView() const;
+
+    void enableOperationButtons();
+    void disableOperationButtons();
+
+    void replaceLeftPanel(QWidget* newWidget);
+    void restoreLeftPanel();
 
 private slots:
     void showToolTable();
@@ -58,6 +75,13 @@ signals:
     void onMachineConfigPressed();
     void onToolTablePressed();
     void onLoadDXFPressed();
+
+    void onFacingPressed();
+    void onTurningPressed();
+    void onContouringPressed();
+    void onThreadingPressed();
+    void onPartingPressed();
+    void onDrillingPressed();
 
 };
 

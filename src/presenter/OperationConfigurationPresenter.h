@@ -12,6 +12,7 @@
 #include "../view/OperationConfigurationPlotHelper.h"
 #include "../model/MachineConfig.h"
 #include "../model/Tool.h"
+#include "../model/geometry/Geometry.h"
 #include "../model/operation/OperationConfiguration.h"
 
 enum class OperationConfigTab {
@@ -24,14 +25,10 @@ enum class OperationConfigTab {
 class OperationConfigurationPresenter : public QObject {
     Q_OBJECT
 private:
-    OperationConfiguration operationConfig = OperationConfiguration();
 
     const OperationConfigVisibility visibilityConfig;
-    const MachineConfig& machineConfig;
     const ToolTable& toolTable;
     GeometryView& geometryView;
-    OperationConfigurationView& configView;
-    OperationConfigurationPlotHelper plotHelper;
 
     bool geometrySelectionEnabled = false;
 
@@ -39,14 +36,23 @@ private:
     void populateToolSelector();
     void applyConfiguration();
 
+protected:
+    const MachineConfig& machineConfig;
+    OperationConfiguration operationConfig = OperationConfiguration();
+    const Geometry& geometry;
+
+    OperationConfigurationView& configView;
+    OperationConfigurationPlotHelper plotHelper;
+
 signals:
     void configurationChanged();
 
 
-private slots:
+protected slots:
     void onTabChanged(OperationConfigTab tab);
     void onGeometrySelectionToggled(bool checked);
-    void onSegmentSelected(size_t index);
+
+    virtual void onSegmentSelected(size_t index);
     void onToolSelectionChanged(int toolNumber);
     void onRpmChanged(int rpm);
     void onFeedrateChanged(int feedrate);
@@ -68,6 +74,7 @@ public:
         const OperationConfigVisibility& opVisibilityConfig,
         const MachineConfig& machineConfig,
         const ToolTable& toolTable,
+        const Geometry& geometry,
         GeometryView& geometryView,
         OperationConfigurationView& operationConfigView,
         QObject* parent = nullptr
