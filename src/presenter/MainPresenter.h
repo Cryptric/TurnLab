@@ -12,6 +12,8 @@
 #include "DXFImportPresenter.h"
 #include "OperationConfigurationPresenter.h"
 #include "../model/MachineConfig.h"
+#include "../model/toolpath/TToolpathSequence.h"
+#include "../view/ToolpathPlotter.h"
 
 
 class MainPresenter : public QObject {
@@ -26,6 +28,10 @@ class MainPresenter : public QObject {
 
     std::unique_ptr<OperationConfigurationView> currentOpConfigView;
     std::unique_ptr<OperationConfigurationPresenter> currentOpConfigPresenter;
+
+    std::vector<TToolpathSequence> toolpaths;
+
+    ToolpathPlotter toolpathPlotter;
 
     void connectSignals();
 

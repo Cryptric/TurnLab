@@ -11,8 +11,9 @@
 #include "ProjectUtils.h"
 #include "../utils/ConfigurationManager.h"
 #include "operation/FacingOperationPresenter.h"
+#include "toolpath/ToolpathGenerator.h"
 
-MainPresenter::MainPresenter() : machineConfig(ConfigurationManager::loadMachineConfig()), toolTable(ConfigurationManager::loadToolTable()), window(machineConfig, toolTable) {
+MainPresenter::MainPresenter() : machineConfig(ConfigurationManager::loadMachineConfig()), toolTable(ConfigurationManager::loadToolTable()), window(machineConfig, toolTable), toolpathPlotter(window.getGeometryView()) {
     window.show();
     connectSignals();
 }
@@ -65,6 +66,11 @@ void MainPresenter::setProject(Project p) {
     if (!p.savePath.empty()) {
         saveProject(*project, p.savePath);
     }
+    toolpaths.clear();
+    for (const auto& op : p.operations) {
+        toolpaths.push_back(ToolpathGenerator::generateToolpath(op));
+    }
+    toolpathPlotter.plotToolpaths(toolpaths);
 }
 
 void MainPresenter::showMachineConfigDialog() {
@@ -87,8 +93,11 @@ void MainPresenter::onOperationConfigOkPressed() {
     saveProject(*project, project->savePath);
     window.setProject(*project);
 
+    toolpaths.push_back(ToolpathGenerator::generateToolpath(currentOpConfigPresenter->getOperationConfiguration()));
+
     window.restoreLeftPanel();
     window.enableOperationButtons();
+    toolpathPlotter.plotToolpaths(toolpaths);
 
     // Clear the current operation configuration view and presenter
     currentOpConfigView.reset();

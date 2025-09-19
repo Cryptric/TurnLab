@@ -103,6 +103,9 @@ add_executable(TurnLab
         src/presenter/operation/FacingOperationPresenter.h
         src/utils/GeometryUtils.cpp
         src/utils/GeometryUtils.h
+        src/utils/toolpath/ToolpathGenerator.cpp
+        src/utils/toolpath/ToolpathGenerator.h
+        src/view/ToolpathPlotter.cpp
 )
 
 target_link_libraries(TurnLab
