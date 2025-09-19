@@ -14,9 +14,10 @@
 #include "../model/Tool.h"
 #include "../model/operation/OperationConfiguration.h"
 
-class OperationConfigurationView : public QTabWidget {
+class OperationConfigurationView : public QWidget {
     Q_OBJECT
 
+    QTabWidget* tabWidget;
     QWidget* toolTab;
     QWidget* geometryTab;
     QWidget* radiiTab;
@@ -41,6 +42,9 @@ class OperationConfigurationView : public QTabWidget {
     QSpinBox* springPassesInput;
     QDoubleSpinBox* peckDepthInput;
     QSpinBox* dwellTimeInput;
+
+    QPushButton* okButton;
+    QPushButton* cancelButton;
 
     OperationConfigVisibility config;
 
@@ -78,6 +82,13 @@ class OperationConfigurationView : public QTabWidget {
         void springPassesChanged(int passes);
         void peckDepthChanged(double depth);
         void dwellTimeChanged(int time);
+
+        // Button signals
+        void okPressed();
+        void cancelPressed();
+
+        // Tab change signal
+        void currentChanged(int index);
 
     private:
         void connectSignals();

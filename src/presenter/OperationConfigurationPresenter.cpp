@@ -28,8 +28,7 @@ OperationConfigurationPresenter::OperationConfigurationPresenter(
 
 void OperationConfigurationPresenter::connectSignals() {
     // Connect tab change signal
-    connect(&configView, QOverload<int>::of(&QTabWidget::currentChanged),
-            this, [this](int index) { onTabChanged(static_cast<OperationConfigTab>(index)); });
+    connect(&configView, QOverload<int>::of(&OperationConfigurationView::currentChanged), this, [this](int index) { onTabChanged(static_cast<OperationConfigTab>(index)); });
 
     // Connect tool tab signals
     connect(&configView, &OperationConfigurationView::toolSelectionChanged,

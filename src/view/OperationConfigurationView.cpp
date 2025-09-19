@@ -10,18 +10,24 @@
 #include <QLabel>
 #include <QFormLayout>
 
-OperationConfigurationView::OperationConfigurationView(QWidget* parent) : QTabWidget(parent) {
+OperationConfigurationView::OperationConfigurationView(QWidget* parent) : QWidget(parent) {
     setupUI();
     connectSignals();
 }
 
 OperationConfigurationView::OperationConfigurationView(const OperationConfigVisibility& visibilityConfig, QWidget* parent)
-    : QTabWidget(parent), config(visibilityConfig) {
+    : QWidget(parent), config(visibilityConfig) {
     setupUI();
     connectSignals();
 }
 
 void OperationConfigurationView::setupUI() {
+    // Create main layout
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+
+    // Create tab widget
+    tabWidget = new QTabWidget();
+
     // Create tabs
     toolTab = new QWidget();
     geometryTab = new QWidget();
@@ -164,10 +170,26 @@ void OperationConfigurationView::setupUI() {
     if (config.showDwellTime) passesLayout->addRow("Dwell Time:", dwellTimeInput);
 
     // Add tabs to the tab widget based on visibility configuration
-    if (config.showToolTab) addTab(toolTab, "Tool");
-    if (config.showGeometryTab) addTab(geometryTab, "Geometry");
-    if (config.showRadiiTab) addTab(radiiTab, "Radii");
-    if (config.showPassesTab) addTab(passesTab, "Passes");
+    if (config.showToolTab) tabWidget->addTab(toolTab, "Tool");
+    if (config.showGeometryTab) tabWidget->addTab(geometryTab, "Geometry");
+    if (config.showRadiiTab) tabWidget->addTab(radiiTab, "Radii");
+    if (config.showPassesTab) tabWidget->addTab(passesTab, "Passes");
+
+    // Create OK and Cancel buttons
+    okButton = new QPushButton("OK");
+    cancelButton = new QPushButton("Cancel");
+    okButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    cancelButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    // Create button layout
+    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(okButton);
+    buttonLayout->addWidget(cancelButton);
+
+    // Add tab widget and buttons to main layout
+    mainLayout->addWidget(tabWidget);
+    mainLayout->addLayout(buttonLayout);
 }
 
 void OperationConfigurationView::connectSignals() {
@@ -225,6 +247,13 @@ void OperationConfigurationView::connectSignals() {
 
     connect(dwellTimeInput, QOverload<int>::of(&QSpinBox::valueChanged),
             this, &OperationConfigurationView::dwellTimeChanged);
+
+    // Button connections
+    connect(okButton, &QPushButton::clicked, this, &OperationConfigurationView::okPressed);
+    connect(cancelButton, &QPushButton::clicked, this, &OperationConfigurationView::cancelPressed);
+
+    // Tab widget connections
+    connect(tabWidget, &QTabWidget::currentChanged, this, &OperationConfigurationView::currentChanged);
 }
 
 void OperationConfigurationView::setToolTable(const ToolTable& toolTable) {
