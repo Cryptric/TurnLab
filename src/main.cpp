@@ -7,6 +7,7 @@
 #include <QCommandLineOption>
 #include <spdlog/spdlog.h>
 
+#include "ProjectUtils.h"
 #include "presenter/MainPresenter.h"
 
 int main(int argc, char *argv[]) {
@@ -20,12 +21,16 @@ int main(int argc, char *argv[]) {
     QCommandLineOption inputDXFOption("i", "Input DXF file", "filename", "");
     parser.addOption(inputDXFOption);
 
+    QCommandLineOption inputProjectOption("p", "Input TurnLab project file", "filename", "");
+    parser.addOption(inputProjectOption);
+
     QCommandLineOption logLevelOption("log-level", "Set log level (trace, debug, info, warn, error, critical, off)", "level", "info");
     parser.addOption(logLevelOption);
 
     parser.process(qtApp);
 
     QString inputDXF = parser.value(inputDXFOption);
+    QString inputProject = parser.value(inputProjectOption);
     QString logLevel = parser.value(logLevelOption);
 
     // Set log level
@@ -49,7 +54,9 @@ int main(int argc, char *argv[]) {
     }
 
     std::unique_ptr<MainPresenter> mainPresenter;
-    if (!inputDXF.isEmpty()) {
+    if (!inputProject.isEmpty()) {
+        mainPresenter = std::make_unique<MainPresenter>(loadProject(inputProject.toStdString()).value());
+    } else if (!inputDXF.isEmpty()) {
         mainPresenter = std::make_unique<MainPresenter>(inputDXF.toStdString());
     } else {
         mainPresenter = std::make_unique<MainPresenter>();

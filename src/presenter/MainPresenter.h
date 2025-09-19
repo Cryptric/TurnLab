@@ -31,12 +31,14 @@ class MainPresenter : public QObject {
     void showMachineConfigDialog();
     void showDXFImportDialog(std::string inputDXF="");
 
-    void setProject(Project p);
 
 public:
     MainPresenter();
     explicit MainPresenter(const std::string &inputDXF);
+    explicit MainPresenter(Project project);
     ~MainPresenter() = default;
+
+    void setProject(Project p);
 
 };
 

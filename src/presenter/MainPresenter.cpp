@@ -20,6 +20,10 @@ MainPresenter::MainPresenter(const std::string &inputDXF) : MainPresenter() {
     showDXFImportDialog(inputDXF);
 }
 
+MainPresenter::MainPresenter(Project project) : MainPresenter() {
+    setProject(project);
+}
+
 void MainPresenter::connectSignals() {
     connect(&window, &MainWindow::onMachineConfigPressed, this, &MainPresenter::showMachineConfigDialog);
     connect(&window, &MainWindow::onLoadDXFPressed, this, [this]() { showDXFImportDialog(); });
