@@ -29,7 +29,7 @@ class MainPresenter : public QObject {
     void connectSignals();
 
     void showMachineConfigDialog();
-    void showDXFImportDialog(const std::string& inputDXF);
+    void showDXFImportDialog(std::string inputDXF="");
 
     void setProject(Project p);
 

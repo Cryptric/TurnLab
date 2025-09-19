@@ -75,6 +75,7 @@ void MainWindow::createRibbonBar() {
 
     connect(toolTableAction, &QAction::triggered, this, &MainWindow::showToolTable);
     connect(machineConfigAction, &QAction::triggered, this, [this]() {emit this->onMachineConfigPressed(); });
+    connect(newAction, &QAction::triggered, this, [this]() {emit this->onLoadDXFPressed(); });
 }
 
 void MainWindow::showToolTable() {

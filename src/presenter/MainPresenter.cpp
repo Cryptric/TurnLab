@@ -4,9 +4,11 @@
 
 #include "MainPresenter.h"
 
+#include <QFileDialog>
 #include <spdlog/spdlog.h>
 
 #include "MachineConfigPresenter.h"
+#include "ProjectUtils.h"
 #include "../utils/ConfigurationManager.h"
 
 MainPresenter::MainPresenter() : machineConfig(ConfigurationManager::loadMachineConfig()), toolTable(ConfigurationManager::loadToolTable()), window(machineConfig, toolTable) {
@@ -20,9 +22,17 @@ MainPresenter::MainPresenter(const std::string &inputDXF) : MainPresenter() {
 
 void MainPresenter::connectSignals() {
     connect(&window, &MainWindow::onMachineConfigPressed, this, &MainPresenter::showMachineConfigDialog);
+    connect(&window, &MainWindow::onLoadDXFPressed, this, [this]() { showDXFImportDialog(); });
 }
 
-void MainPresenter::showDXFImportDialog(const std::string& inputDXF) {
+void MainPresenter::showDXFImportDialog(std::string inputDXF) {
+    if (inputDXF.empty()) {
+        spdlog::info("Showing DXF import dialog");
+        inputDXF = QFileDialog::getOpenFileName(nullptr, "Open DXF File", "", "DXF Files (*.dxf)").toStdString();
+        if (inputDXF.empty()) {
+            return;
+        }
+    }
     const DXFImportPresenter presenter(inputDXF, machineConfig, &window);
     if (const std::optional<Project> p = presenter.showDialog(); p.has_value()) {
         setProject(p.value());

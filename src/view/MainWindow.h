@@ -57,6 +57,7 @@ private:
 signals:
     void onMachineConfigPressed();
     void onToolTablePressed();
+    void onLoadDXFPressed();
 
 };
 
