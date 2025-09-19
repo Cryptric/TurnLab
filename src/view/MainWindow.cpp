@@ -95,6 +95,7 @@ void MainWindow::setProject(const Project& project) const {
     geometryView->setGeometry(project.geometry);
     geometryView->plotStock(project.stockMaterial);
     geometryView->replot();
+    leftPanel->setProject(project);
 }
 
 GeometryView& MainWindow::getGeometryView() const {

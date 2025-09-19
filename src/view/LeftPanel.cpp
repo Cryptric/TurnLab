@@ -35,38 +35,36 @@ void LeftPanel::setupTreeModel() {
 void LeftPanel::populateTree() {
     auto* rootItem = model->invisibleRootItem();
     
-    auto* operationsItem = new QStandardItem("Machining Operations");
+    operationsItem = new QStandardItem("Machining Operations");
     operationsItem->setEditable(false);
     operationsItem->setIcon(style()->standardIcon(QStyle::SP_DirIcon));
     rootItem->appendRow(operationsItem);
     
-    QStringList operationTypes = {
-        "Facing Operations",
-        "Turning Operations", 
-        "Contouring Operations",
-        "Threading Operations",
-        "Parting Operations",
-        "Drilling Operations"
-    };
-    
-    for (const QString& opType : operationTypes) {
-        auto* categoryItem = new QStandardItem(opType);
-        categoryItem->setEditable(false);
-        categoryItem->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
-        operationsItem->appendRow(categoryItem);
-    }
-    
-    auto* toolsItem = new QStandardItem("Tool Configuration");
+
+    toolsItem = new QStandardItem("Tool Configuration");
     toolsItem->setEditable(false);
     toolsItem->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
     rootItem->appendRow(toolsItem);
-    
-    auto* profileItem = new QStandardItem("Profile Geometry");
-    profileItem->setEditable(false);
-    profileItem->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
-    rootItem->appendRow(profileItem);
-    
+
+    geometryItem = new QStandardItem("Profile Geometry");
+    geometryItem->setEditable(false);
+    geometryItem->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+    rootItem->appendRow(geometryItem);
+
     treeView->expandAll();
+}
+
+void LeftPanel::setProject(const Project& p) {
+    project = p;
+    operationsItem->removeRows(0, operationsItem->rowCount());
+
+    for (const auto& op : project.operations) {
+        auto* item = new QStandardItem(QString(toString(op.operationType).c_str()));
+        item->setEditable(false);
+        item->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
+        operationsItem->appendRow(item);
+
+    }
 }
 
 QTreeView* LeftPanel::getTreeView() const {

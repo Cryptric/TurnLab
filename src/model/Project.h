@@ -7,13 +7,16 @@
 #include <nlohmann/json.hpp>
 #include "Geometry.h"
 #include "StockMaterial.h"
+#include "operation/OperationConfiguration.h"
 
 struct Project {
     std::string savePath;
     Geometry geometry;
     StockMaterial stockMaterial;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Project, savePath, geometry, stockMaterial)
+    std::vector<OperationConfiguration> operations;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Project, savePath, geometry, stockMaterial, operations)
 };
 
 #endif //TURNLAB_PROJECT_H

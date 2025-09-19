@@ -5,7 +5,41 @@
 #ifndef TURNLAB_OPERATIONCONFIGURATION_H
 #define TURNLAB_OPERATIONCONFIGURATION_H
 
+#include <nlohmann/json.hpp>
+
+enum class OperationType {
+    Facing,
+    Turning,
+    Contouring,
+    Threading,
+    Parting,
+    Drilling
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(OperationType, {
+    {OperationType::Facing, "Facing"},
+    {OperationType::Turning, "Turning"},
+    {OperationType::Contouring, "Contouring"},
+    {OperationType::Threading, "Threading"},
+    {OperationType::Parting, "Parting"},
+    {OperationType::Drilling, "Drilling"}
+})
+
+inline std::string toString(OperationType type) {
+    switch (type) {
+        case OperationType::Facing: return "Facing";
+        case OperationType::Turning: return "Turning";
+        case OperationType::Contouring: return "Contouring";
+        case OperationType::Threading: return "Threading";
+        case OperationType::Parting: return "Parting";
+        case OperationType::Drilling: return "Drilling";
+        default: return "Unknown";
+    }
+}
+
 struct OperationConfiguration {
+    OperationType operationType;
+
     // Tool configuration
     int toolNumber = 0;
     int rpm = 1000;
@@ -32,6 +66,14 @@ struct OperationConfiguration {
     int springPasses = 1;
     double peckDepth = 3.0;         // mm
     int dwellTime = 500;            // ms
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(OperationConfiguration,
+        operationType,
+        toolNumber, rpm, feedrate,
+        geometrySelection,
+        axialStartPosition, axialEndPosition, axialStartOffset, axialEndOffset,
+        retractDistance, clearanceDistance, feedDistance, outerDistance, innerDistance,
+        stepover, cutDepthPerPass, springPasses, peckDepth, dwellTime)
 };
 
 struct OperationConfigVisibility {
@@ -65,6 +107,13 @@ struct OperationConfigVisibility {
     bool showGeometryTab = false;
     bool showRadiiTab = false;
     bool showPassesTab = false;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(OperationConfigVisibility,
+        showToolSelector, showRpmInput, showFeedrateInput,
+        showGeometrySelection, singleSegmentSelection, showAxialStartOffset, showAxialEndOffset,
+        showRetractDistance, showClearanceDistance, showFeedDistance, showOuterDistance, showInnerDistance,
+        showStepover, showCutDepthPerPass, showSpringPasses, showPeckDepth, showDwellTime,
+        showToolTab, showGeometryTab, showRadiiTab, showPassesTab)
 };
 
 #endif //TURNLAB_OPERATIONCONFIGURATION_H

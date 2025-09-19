@@ -83,6 +83,9 @@ void MainPresenter::onOperationConfigOkPressed() {
 
     // TODO: Save the operation configuration or apply it to the project
     // For now, just restore the left panel and enable operation buttons
+    project->operations.push_back(currentOpConfigPresenter->getOperationConfiguration());
+    saveProject(*project, project->savePath);
+    window.setProject(*project);
 
     window.restoreLeftPanel();
     window.enableOperationButtons();

@@ -8,6 +8,8 @@
 #include <QStandardItem>
 #include <QLabel>
 
+#include "../model/Project.h"
+
 class LeftPanel : public QWidget {
     Q_OBJECT
 
@@ -17,12 +19,20 @@ private:
     QTreeView* treeView;
     QStandardItemModel* model;
 
+    QStandardItem* operationsItem;
+    QStandardItem* toolsItem;
+    QStandardItem* geometryItem;
+
+    Project project;
+
 public:
     explicit LeftPanel(QWidget *parent = nullptr);
     ~LeftPanel() = default;
 
     QTreeView* getTreeView() const;
     QStandardItemModel* getModel() const;
+
+    void setProject(const Project& p);
 
 private:
     void setupUI();

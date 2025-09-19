@@ -10,7 +10,7 @@
 #include "../model/geometry/Line.h"
 
 FacingOperationPresenter::FacingOperationPresenter(const MachineConfig &machineConfig, const ToolTable &toolTable, const Geometry &geometry, GeometryView &geometryView, OperationConfigurationView &operationConfigView, QObject *parent) : OperationConfigurationPresenter(visibility, machineConfig, toolTable, geometry, geometryView, operationConfigView, parent) {
-
+    operationConfig.operationType = OperationType::Facing;
 }
 
 
