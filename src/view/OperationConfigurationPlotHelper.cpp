@@ -11,24 +11,32 @@ OperationConfigurationPlotHelper::OperationConfigurationPlotHelper(const Operati
     retractDistanceMarker.setLineStyle(QwtPlotMarker::HLine);
     retractDistanceMarker.setLinePen(retractDistancePen);
     retractDistanceMarker.setTitle("Retract Distance");
-    retractDistanceMarker.setLabel(QwtText(retractDistanceMarker.title().text()));  // Display it as label
+    retractDistanceMarker.setLabel(QwtText(retractDistanceMarker.title().text()));
     retractDistanceMarker.setLabelAlignment(Qt::AlignTop | Qt::AlignRight);
 
     clearanceDistanceMarker.setLineStyle(QwtPlotMarker::HLine);
     clearanceDistanceMarker.setLinePen(clearanceDistancePen);
     clearanceDistanceMarker.setTitle("Clearance Distance");
+    clearanceDistanceMarker.setLabel(QwtText(clearanceDistanceMarker.title().text()));
+    clearanceDistanceMarker.setLabelAlignment(Qt::AlignTop | Qt::AlignRight);
 
     feedDistanceMarker.setLineStyle(QwtPlotMarker::HLine);
     feedDistanceMarker.setLinePen(feedDistancePen);
     feedDistanceMarker.setTitle("Feed Distance");
+    feedDistanceMarker.setLabel(QwtText(feedDistanceMarker.title().text()));
+    feedDistanceMarker.setLabelAlignment(Qt::AlignTop | Qt::AlignRight);
 
     outerDistanceMarker.setLineStyle(QwtPlotMarker::HLine);
     outerDistanceMarker.setLinePen(outerDistancePen);
     outerDistanceMarker.setTitle("Outer Distance");
+    outerDistanceMarker.setLabel(QwtText(outerDistanceMarker.title().text()));
+    outerDistanceMarker.setLabelAlignment(Qt::AlignTop | Qt::AlignRight);
 
     innerDistanceMarker.setLineStyle(QwtPlotMarker::HLine);
     innerDistanceMarker.setLinePen(innerDistancePen);
     innerDistanceMarker.setTitle("Inner Distance");
+    innerDistanceMarker.setLabel(QwtText(innerDistanceMarker.title().text()));
+    innerDistanceMarker.setLabelAlignment(Qt::AlignTop | Qt::AlignRight);
 
     axialStartOffsetMarker.setLineStyle(QwtPlotMarker::VLine);
     axialStartOffsetMarker.setLinePen(axialStartOffsetPen);
@@ -99,8 +107,8 @@ void OperationConfigurationPlotHelper::update() {
     outerDistanceMarker.setYValue(operationConfig.outerDistance);
     innerDistanceMarker.setYValue(operationConfig.innerDistance);
 
-    axialStartOffsetMarker.setXValue(operationConfig.axialStartOffset);
-    axialEndOffsetMarker.setXValue(operationConfig.axialEndOffset);
+    axialStartOffsetMarker.setXValue(operationConfig.axialStartPosition + operationConfig.axialStartOffset);
+    axialEndOffsetMarker.setXValue(operationConfig.axialEndPosition + operationConfig.axialEndOffset);
 
     geometryView.replot();
 }

@@ -27,14 +27,14 @@ class OperationConfigurationView : public QTabWidget {
     QSpinBox* feedrateInput;
 
     QPushButton* geometrySelectionButton;
-    QSpinBox* axialStartOffset;
-    QSpinBox* axialEndOffset;
+    QDoubleSpinBox* axialStartOffset;
+    QDoubleSpinBox* axialEndOffset;
 
-    QSpinBox* retractDistanceInput;
-    QSpinBox* clearanceDistanceInput;
-    QSpinBox* feedDistanceInput;
-    QSpinBox* outerDistanceInput;
-    QSpinBox* innerDistanceInput;
+    QDoubleSpinBox* retractDistanceInput;
+    QDoubleSpinBox* clearanceDistanceInput;
+    QDoubleSpinBox* feedDistanceInput;
+    QDoubleSpinBox* outerDistanceInput;
+    QDoubleSpinBox* innerDistanceInput;
 
     QDoubleSpinBox* stepoverInput;
     QDoubleSpinBox* cutDepthPerPassInput;
@@ -52,6 +52,7 @@ class OperationConfigurationView : public QTabWidget {
         ~OperationConfigurationView() override = default;
 
         void setToolTable(const ToolTable& toolTable);
+        void setOperationConfiguration(const OperationConfiguration& config);
 
     signals:
         // Tool tab signals
@@ -61,15 +62,15 @@ class OperationConfigurationView : public QTabWidget {
 
         // Geometry tab signals
         void geometrySelectionToggled(bool enabled);
-        void axialStartOffsetChanged(int offset);
-        void axialEndOffsetChanged(int offset);
+        void axialStartOffsetChanged(double offset);
+        void axialEndOffsetChanged(double offset);
 
         // Radii tab signals
-        void retractDistanceChanged(int distance);
-        void clearanceDistanceChanged(int distance);
-        void feedDistanceChanged(int distance);
-        void outerDistanceChanged(int distance);
-        void innerDistanceChanged(int distance);
+        void retractDistanceChanged(double distance);
+        void clearanceDistanceChanged(double distance);
+        void feedDistanceChanged(double distance);
+        void outerDistanceChanged(double distance);
+        void innerDistanceChanged(double distance);
 
         // Passes tab signals
         void stepoverChanged(double stepover);

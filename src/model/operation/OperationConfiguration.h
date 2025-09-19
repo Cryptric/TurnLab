@@ -13,15 +13,18 @@ struct OperationConfiguration {
 
     // Geometry configuration
     std::vector<size_t> geometrySelection = {};
-    int axialStartOffset = 0;  // mm
-    int axialEndOffset = 0;    // mm
+
+    double axialStartPosition = 10;     // mm
+    double axialEndPosition = 0;       // mm
+    double axialStartOffset = 0;  // mm
+    double axialEndOffset = 0;    // mm
 
     // Radii configuration
-    int retractDistance = 5;   // mm
-    int clearanceDistance = 2; // mm
-    int feedDistance = 1;      // mm
-    int outerDistance = 10;    // mm
-    int innerDistance = 5;     // mm
+    double retractDistance = 5;   // mm
+    double clearanceDistance = 2; // mm
+    double feedDistance = 1;      // mm
+    double outerDistance = 10;    // mm
+    double innerDistance = 5;     // mm
 
     // Passes configuration
     double stepover = 5.0;          // mm

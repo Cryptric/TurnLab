@@ -135,49 +135,49 @@ void OperationConfigurationPresenter::onFeedrateChanged(int feedrate) {
     emit configurationChanged();
 }
 
-void OperationConfigurationPresenter::onAxialStartOffsetChanged(int offset) {
+void OperationConfigurationPresenter::onAxialStartOffsetChanged(double offset) {
     spdlog::debug("Axial start offset changed to: {}", offset);
     operationConfig.axialStartOffset = offset;
     plotHelper.update();
     emit configurationChanged();
 }
 
-void OperationConfigurationPresenter::onAxialEndOffsetChanged(int offset) {
+void OperationConfigurationPresenter::onAxialEndOffsetChanged(double offset) {
     spdlog::debug("Axial end offset changed to: {}", offset);
     operationConfig.axialEndOffset = offset;
     plotHelper.update();
     emit configurationChanged();
 }
 
-void OperationConfigurationPresenter::onRetractDistanceChanged(int distance) {
+void OperationConfigurationPresenter::onRetractDistanceChanged(double distance) {
     spdlog::debug("Retract distance changed to: {}", distance);
     operationConfig.retractDistance = distance;
     plotHelper.update();
     emit configurationChanged();
 }
 
-void OperationConfigurationPresenter::onClearanceDistanceChanged(int distance) {
+void OperationConfigurationPresenter::onClearanceDistanceChanged(double distance) {
     spdlog::debug("Clearance distance changed to: {}", distance);
     operationConfig.clearanceDistance = distance;
     plotHelper.update();
     emit configurationChanged();
 }
 
-void OperationConfigurationPresenter::onFeedDistanceChanged(int distance) {
+void OperationConfigurationPresenter::onFeedDistanceChanged(double distance) {
     spdlog::debug("Feed distance changed to: {}", distance);
     operationConfig.feedDistance = distance;
     plotHelper.update();
     emit configurationChanged();
 }
 
-void OperationConfigurationPresenter::onOuterDistanceChanged(int distance) {
+void OperationConfigurationPresenter::onOuterDistanceChanged(double distance) {
     spdlog::debug("Outer distance changed to: {}", distance);
     operationConfig.outerDistance = distance;
     plotHelper.update();
     emit configurationChanged();
 }
 
-void OperationConfigurationPresenter::onInnerDistanceChanged(int distance) {
+void OperationConfigurationPresenter::onInnerDistanceChanged(double distance) {
     spdlog::debug("Inner distance changed to: {}", distance);
     operationConfig.innerDistance = distance;
     plotHelper.update();

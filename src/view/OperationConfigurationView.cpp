@@ -63,17 +63,19 @@ void OperationConfigurationView::setupUI() {
     geometrySelectionButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     if (config.showGeometrySelection) geometryLayout->addRow("Geometry Selection:", geometrySelectionButton);
 
-    axialStartOffset = new QSpinBox();
-    axialStartOffset->setRange(-1000, 1000);
+    axialStartOffset = new QDoubleSpinBox();
+    axialStartOffset->setRange(-1000.0, 1000.0);
     axialStartOffset->setSuffix(" mm");
-    axialStartOffset->setValue(0);
+    axialStartOffset->setDecimals(2);
+    axialStartOffset->setValue(0.0);
     axialStartOffset->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     if (config.showAxialStartOffset) geometryLayout->addRow("Axial Start Offset:", axialStartOffset);
 
-    axialEndOffset = new QSpinBox();
-    axialEndOffset->setRange(-1000, 1000);
+    axialEndOffset = new QDoubleSpinBox();
+    axialEndOffset->setRange(-1000.0, 1000.0);
     axialEndOffset->setSuffix(" mm");
-    axialEndOffset->setValue(0);
+    axialEndOffset->setDecimals(2);
+    axialEndOffset->setValue(0.0);
     axialEndOffset->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     if (config.showAxialEndOffset) geometryLayout->addRow("Axial End Offset:", axialEndOffset);
 
@@ -81,34 +83,39 @@ void OperationConfigurationView::setupUI() {
     QFormLayout* radiiFormLayout = new QFormLayout(radiiTab);
     radiiFormLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
 
-    retractDistanceInput = new QSpinBox();
-    retractDistanceInput->setRange(0, 100);
+    retractDistanceInput = new QDoubleSpinBox();
+    retractDistanceInput->setRange(0.0, 100.0);
     retractDistanceInput->setSuffix(" mm");
-    retractDistanceInput->setValue(5);
+    retractDistanceInput->setDecimals(2);
+    retractDistanceInput->setValue(5.0);
     retractDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    clearanceDistanceInput = new QSpinBox();
-    clearanceDistanceInput->setRange(0, 100);
+    clearanceDistanceInput = new QDoubleSpinBox();
+    clearanceDistanceInput->setRange(0.0, 100.0);
     clearanceDistanceInput->setSuffix(" mm");
-    clearanceDistanceInput->setValue(2);
+    clearanceDistanceInput->setDecimals(2);
+    clearanceDistanceInput->setValue(2.0);
     clearanceDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    feedDistanceInput = new QSpinBox();
-    feedDistanceInput->setRange(0, 100);
+    feedDistanceInput = new QDoubleSpinBox();
+    feedDistanceInput->setRange(0.0, 100.0);
     feedDistanceInput->setSuffix(" mm");
-    feedDistanceInput->setValue(1);
+    feedDistanceInput->setDecimals(2);
+    feedDistanceInput->setValue(1.0);
     feedDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    outerDistanceInput = new QSpinBox();
-    outerDistanceInput->setRange(0, 100);
+    outerDistanceInput = new QDoubleSpinBox();
+    outerDistanceInput->setRange(0.0, 100.0);
     outerDistanceInput->setSuffix(" mm");
-    outerDistanceInput->setValue(10);
+    outerDistanceInput->setDecimals(2);
+    outerDistanceInput->setValue(10.0);
     outerDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    innerDistanceInput = new QSpinBox();
-    innerDistanceInput->setRange(0, 100);
+    innerDistanceInput = new QDoubleSpinBox();
+    innerDistanceInput->setRange(0.0, 100.0);
     innerDistanceInput->setSuffix(" mm");
-    innerDistanceInput->setValue(5);
+    innerDistanceInput->setDecimals(2);
+    innerDistanceInput->setValue(5.0);
     innerDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     if (config.showRetractDistance) radiiFormLayout->addRow("Retract Distance:", retractDistanceInput);
@@ -181,26 +188,26 @@ void OperationConfigurationView::connectSignals() {
     connect(geometrySelectionButton, &QPushButton::toggled,
             this, &OperationConfigurationView::geometrySelectionToggled);
 
-    connect(axialStartOffset, QOverload<int>::of(&QSpinBox::valueChanged),
+    connect(axialStartOffset, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &OperationConfigurationView::axialStartOffsetChanged);
 
-    connect(axialEndOffset, QOverload<int>::of(&QSpinBox::valueChanged),
+    connect(axialEndOffset, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &OperationConfigurationView::axialEndOffsetChanged);
 
     // Radii tab connections
-    connect(retractDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+    connect(retractDistanceInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &OperationConfigurationView::retractDistanceChanged);
 
-    connect(clearanceDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+    connect(clearanceDistanceInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &OperationConfigurationView::clearanceDistanceChanged);
 
-    connect(feedDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+    connect(feedDistanceInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &OperationConfigurationView::feedDistanceChanged);
 
-    connect(outerDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+    connect(outerDistanceInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &OperationConfigurationView::outerDistanceChanged);
 
-    connect(innerDistanceInput, QOverload<int>::of(&QSpinBox::valueChanged),
+    connect(innerDistanceInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &OperationConfigurationView::innerDistanceChanged);
 
     // Passes tab connections
@@ -232,4 +239,34 @@ void OperationConfigurationView::setToolTable(const ToolTable& toolTable) {
             tool.number
         );
     }
+}
+
+void OperationConfigurationView::setOperationConfiguration(const OperationConfiguration& config) {
+    // Set tool configuration values
+    for (int i = 0; i < toolSelector->count(); ++i) {
+        if (toolSelector->itemData(i).toInt() == config.toolNumber) {
+            toolSelector->setCurrentIndex(i);
+            break;
+        }
+    }
+    rpmInput->setValue(config.rpm);
+    feedrateInput->setValue(config.feedrate);
+
+    // Set geometry configuration values
+    axialStartOffset->setValue(config.axialStartOffset);
+    axialEndOffset->setValue(config.axialEndOffset);
+
+    // Set radii configuration values
+    retractDistanceInput->setValue(config.retractDistance);
+    clearanceDistanceInput->setValue(config.clearanceDistance);
+    feedDistanceInput->setValue(config.feedDistance);
+    outerDistanceInput->setValue(config.outerDistance);
+    innerDistanceInput->setValue(config.innerDistance);
+
+    // Set passes configuration values
+    stepoverInput->setValue(config.stepover);
+    cutDepthPerPassInput->setValue(config.cutDepthPerPass);
+    springPassesInput->setValue(config.springPasses);
+    peckDepthInput->setValue(config.peckDepth);
+    dwellTimeInput->setValue(config.dwellTime);
 }
