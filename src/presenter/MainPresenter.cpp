@@ -11,6 +11,7 @@
 #include "ProjectUtils.h"
 #include "../utils/ConfigurationManager.h"
 #include "operation/FacingOperationPresenter.h"
+#include "postprocessor/PythonPostProcessor.h"
 #include "toolpath/ToolpathGenerator.h"
 
 MainPresenter::MainPresenter() : machineConfig(ConfigurationManager::loadMachineConfig()), toolTable(ConfigurationManager::loadToolTable()), window(machineConfig, toolTable), toolpathPlotter(window.getGeometryView()) {
@@ -71,6 +72,11 @@ void MainPresenter::setProject(Project p) {
         toolpaths.push_back(ToolpathGenerator::generateToolpath(op));
     }
     toolpathPlotter.plotToolpaths(toolpaths);
+
+    // TODO remove dev call
+    PythonPostProcessor postProcessor(machineConfig, toolTable);
+    postProcessor.generateGCode(toolpaths);
+
 }
 
 void MainPresenter::showMachineConfigDialog() {
@@ -87,8 +93,6 @@ void MainPresenter::showMachineConfigDialog() {
 void MainPresenter::onOperationConfigOkPressed() {
     spdlog::info("Operation configuration OK pressed");
 
-    // TODO: Save the operation configuration or apply it to the project
-    // For now, just restore the left panel and enable operation buttons
     project->operations.push_back(currentOpConfigPresenter->getOperationConfiguration());
     saveProject(*project, project->savePath);
     window.setProject(*project);

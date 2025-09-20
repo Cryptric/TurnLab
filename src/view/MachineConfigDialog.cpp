@@ -18,24 +18,26 @@ MachineConfigDialog::MachineConfigDialog(QWidget *parent)
 
 void MachineConfigDialog::setupUI() {
     mainLayout = new QVBoxLayout(this);
-    
+
     setupAxisDirectionGroup();
     setupMachineLimitsGroup();
     setupDisplaySettingsGroup();
-    
+    setupPostProcessorGroup();
+
     // Restore Defaults button
     restoreDefaultsButton = new QPushButton("Restore Defaults", this);
-    
+
     // Dialog buttons
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    
+
     // Add to main layout
     mainLayout->addWidget(axisDirectionGroup);
     mainLayout->addWidget(machineLimitsGroup);
     mainLayout->addWidget(displaySettingsGroup);
+    mainLayout->addWidget(postProcessorGroup);
     mainLayout->addWidget(restoreDefaultsButton);
     mainLayout->addWidget(buttonBox);
-    
+
     setLayout(mainLayout);
 }
 
@@ -126,19 +128,40 @@ void MachineConfigDialog::setupMachineLimitsGroup() {
 void MachineConfigDialog::setupDisplaySettingsGroup() {
     displaySettingsGroup = new QGroupBox("Display Settings", this);
     displaySettingsLayout = new QFormLayout(displaySettingsGroup);
-    
+
     // Display Precision
     displayPrecisionSpinBox = new QSpinBox(this);
     displayPrecisionSpinBox->setRange(0, 6);
     displayPrecisionSpinBox->setSuffix(" decimal places");
-    
+
     displaySettingsLayout->addRow("Coordinate Display Precision:", displayPrecisionSpinBox);
+}
+
+void MachineConfigDialog::setupPostProcessorGroup() {
+    postProcessorGroup = new QGroupBox("PostProcessor Settings", this);
+    postProcessorLayout = new QFormLayout(postProcessorGroup);
+
+    // Script Path with Browse button
+    QHBoxLayout* scriptPathLayout = new QHBoxLayout();
+    postprocessorScriptPathLineEdit = new QLineEdit(this);
+    browseScriptButton = new QPushButton("Browse...", this);
+    browseScriptButton->setMaximumWidth(80);
+
+    scriptPathLayout->addWidget(postprocessorScriptPathLineEdit);
+    scriptPathLayout->addWidget(browseScriptButton);
+
+    // Class Name
+    postprocessorClassNameLineEdit = new QLineEdit(this);
+
+    postProcessorLayout->addRow("Script Path:", scriptPathLayout);
+    postProcessorLayout->addRow("Class Name:", postprocessorClassNameLineEdit);
 }
 
 void MachineConfigDialog::connectSignals() {
     connect(buttonBox, &QDialogButtonBox::accepted, this, &MachineConfigDialog::onOkClicked);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &MachineConfigDialog::onCancelClicked);
     connect(restoreDefaultsButton, &QPushButton::clicked, this, &MachineConfigDialog::onRestoreDefaultsClicked);
+    connect(browseScriptButton, &QPushButton::clicked, this, &MachineConfigDialog::onBrowseScriptClicked);
 }
 
 void MachineConfigDialog::setMachineConfig(const MachineConfig& config) {
@@ -174,6 +197,10 @@ void MachineConfigDialog::updateUIFromConfig(const MachineConfig& config) {
     
     // Display settings
     displayPrecisionSpinBox->setValue(config.displayPrecision);
+
+    // PostProcessor settings
+    postprocessorScriptPathLineEdit->setText(QString::fromStdString(config.postprocessorScriptPath));
+    postprocessorClassNameLineEdit->setText(QString::fromStdString(config.postprocessorClassName));
 }
 
 MachineConfig MachineConfigDialog::getConfigFromUI() const {
@@ -195,7 +222,11 @@ MachineConfig MachineConfigDialog::getConfigFromUI() const {
     
     // Display settings
     config.displayPrecision = displayPrecisionSpinBox->value();
-    
+
+    // PostProcessor settings
+    config.postprocessorScriptPath = postprocessorScriptPathLineEdit->text().toStdString();
+    config.postprocessorClassName = postprocessorClassNameLineEdit->text().toStdString();
+
     return config;
 }
 
@@ -211,4 +242,15 @@ void MachineConfigDialog::onCancelClicked() {
 void MachineConfigDialog::onRestoreDefaultsClicked() {
     MachineConfig defaultConfig; // Create with default values
     updateUIFromConfig(defaultConfig);
+}
+
+void MachineConfigDialog::onBrowseScriptClicked() {
+    QString fileName = QFileDialog::getOpenFileName(this,
+        "Select PostProcessor Script",
+        postprocessorScriptPathLineEdit->text(),
+        "Python Files (*.py)");
+
+    if (!fileName.isEmpty()) {
+        postprocessorScriptPathLineEdit->setText(fileName);
+    }
 }

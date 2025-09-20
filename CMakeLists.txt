@@ -18,6 +18,10 @@ find_package(Qt6 COMPONENTS
 find_package(spdlog REQUIRED)
 find_package(dime REQUIRED)
 find_package(nlohmann_json REQUIRED)
+
+find_package(pybind11 REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
 find_path(QWT_INCLUDE_DIR qwt_plot.h
         PATHS /usr/include/qwt-qt6
         /usr/include/qwt
@@ -106,6 +110,10 @@ add_executable(TurnLab
         src/utils/toolpath/ToolpathGenerator.cpp
         src/utils/toolpath/ToolpathGenerator.h
         src/view/ToolpathPlotter.cpp
+        src/utils/postprocessor/PythonPostProcessor.cpp
+        src/utils/postprocessor/PythonPostProcessor.h
+        src/utils/postprocessor/python_bindings.cpp
+        src/utils/postprocessor/python_bindings.h
 )
 
 target_link_libraries(TurnLab
@@ -115,6 +123,7 @@ target_link_libraries(TurnLab
         Qt::Widgets
         Qt::Charts
         ${QWT_LIBRARY}
+        pybind11::embed
 )
 target_include_directories(TurnLab PRIVATE ${QWT_INCLUDE_DIR})
 

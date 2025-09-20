@@ -6,6 +6,7 @@
 #define TURNLAB_MACHINECONFIG_H
 
 #include <nlohmann/json.hpp>
+#include <string>
 
 enum class AxisDirection {
     Positive,
@@ -27,7 +28,11 @@ struct MachineConfig {
     
     // Display Settings
     int displayPrecision = 3;             // Number of decimal places for coordinates
-    
+
+    // PostProcessor Settings
+    std::string postprocessorScriptPath = "";    // Path to Python postprocessor script
+    std::string postprocessorClassName = "";     // Name of the postprocessor class
+
     // Chuck Position (fixed on left side - no configuration needed)
     
     // JSON serialization
@@ -40,7 +45,9 @@ struct MachineConfig {
         maxZTravel,
         maxXRadius,
         minClearanceDistance,
-        displayPrecision
+        displayPrecision,
+        postprocessorScriptPath,
+        postprocessorClassName
     )
 };
 

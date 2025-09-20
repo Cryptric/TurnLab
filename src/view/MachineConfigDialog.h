@@ -17,6 +17,8 @@
 #include <QLabel>
 #include <QButtonGroup>
 #include <QDialogButtonBox>
+#include <QLineEdit>
+#include <QFileDialog>
 
 #include "../model/MachineConfig.h"
 
@@ -34,12 +36,14 @@ private slots:
     void onOkClicked();
     void onCancelClicked();
     void onRestoreDefaultsClicked();
+    void onBrowseScriptClicked();
 
 private:
     void setupUI();
     void setupAxisDirectionGroup();
     void setupMachineLimitsGroup();
     void setupDisplaySettingsGroup();
+    void setupPostProcessorGroup();
     void connectSignals();
     void updateUIFromConfig(const MachineConfig& config);
     MachineConfig getConfigFromUI() const;
@@ -75,9 +79,17 @@ private:
     // Display Settings
     QGroupBox* displaySettingsGroup;
     QFormLayout* displaySettingsLayout;
-    
+
     QSpinBox* displayPrecisionSpinBox;
-    
+
+    // PostProcessor Settings
+    QGroupBox* postProcessorGroup;
+    QFormLayout* postProcessorLayout;
+
+    QLineEdit* postprocessorScriptPathLineEdit;
+    QPushButton* browseScriptButton;
+    QLineEdit* postprocessorClassNameLineEdit;
+
     // Dialog buttons
     QDialogButtonBox* buttonBox;
     QPushButton* restoreDefaultsButton;
