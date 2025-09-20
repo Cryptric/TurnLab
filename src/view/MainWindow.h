@@ -49,6 +49,9 @@ private:
     QAction* partingAction;
     QAction* drillingAction;
 
+    // GCode generation action
+    QAction* generateGCodeAction;
+
 
 public:
     explicit MainWindow(const MachineConfig& config, const ToolTable& tools, QWidget *parent = nullptr);
@@ -82,6 +85,8 @@ signals:
     void onThreadingPressed();
     void onPartingPressed();
     void onDrillingPressed();
+
+    void onGenerateGCodePressed();
 
 };
 

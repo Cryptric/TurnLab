@@ -14,6 +14,7 @@
         <file>res/icons/import.png</file>
         <file>res/icons/folder.png</file>
         <file>res/icons/save.png</file>
+        <file>res/icons/export.png</file>
 
         <file>res/icons/mirror-x.png</file>
         <file>res/icons/mirror-z.png</file>

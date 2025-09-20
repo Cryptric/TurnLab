@@ -30,8 +30,8 @@ struct MachineConfig {
     int displayPrecision = 3;             // Number of decimal places for coordinates
 
     // PostProcessor Settings
-    std::string postprocessorScriptPath = "";    // Path to Python postprocessor script
-    std::string postprocessorClassName = "";     // Name of the postprocessor class
+    std::string postprocessorScriptPath = "";    // Path to Python pyPostProcessor script
+    std::string postprocessorClassName = "";     // Name of the pyPostProcessor class
 
     // Chuck Position (fixed on left side - no configuration needed)
     

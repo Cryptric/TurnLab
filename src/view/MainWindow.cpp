@@ -74,9 +74,14 @@ void MainWindow::createRibbonBar() {
     QAction* toolTableAction = ribbonBar->addAction(QIcon(":res/icons/tool.png"), "Tool Table");
     QAction* machineConfigAction = ribbonBar->addAction(QIcon(":/res/icons/lathe.png"), "Machine Configuration");
 
+    ribbonBar->addSeparator();
+
+    generateGCodeAction = ribbonBar->addAction(QIcon(":/res/icons/export.png"), "Generate GCode");
+
     connect(toolTableAction, &QAction::triggered, this, &MainWindow::showToolTable);
     connect(machineConfigAction, &QAction::triggered, this, [this]() {emit this->onMachineConfigPressed(); });
     connect(newAction, &QAction::triggered, this, [this]() {emit this->onLoadDXFPressed(); });
+    connect(generateGCodeAction, &QAction::triggered, this, [this]() {emit this->onGenerateGCodePressed(); });
 
     connect(facingAction, &QAction::triggered, this, [this]() {emit this->onFacingPressed(); });
     connect(turningAction, &QAction::triggered, this, [this]() {emit this->onTurningPressed(); });

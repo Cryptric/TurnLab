@@ -2,16 +2,17 @@
 // Created by gawain on 9/11/25.
 //
 
+#include "postprocessor/PythonPostProcessor.h"
 #include "MainPresenter.h"
 
 #include <QFileDialog>
 #include <spdlog/spdlog.h>
+#include <fstream>
 
 #include "MachineConfigPresenter.h"
 #include "ProjectUtils.h"
 #include "../utils/ConfigurationManager.h"
 #include "operation/FacingOperationPresenter.h"
-#include "postprocessor/PythonPostProcessor.h"
 #include "toolpath/ToolpathGenerator.h"
 
 MainPresenter::MainPresenter() : machineConfig(ConfigurationManager::loadMachineConfig()), toolTable(ConfigurationManager::loadToolTable()), window(machineConfig, toolTable), toolpathPlotter(window.getGeometryView()) {
@@ -32,6 +33,7 @@ void MainPresenter::connectSignals() {
     connect(&window, &MainWindow::onLoadDXFPressed, this, [this]() { showDXFImportDialog(); });
 
     connect(&window, &MainWindow::onFacingPressed, this, &MainPresenter::onFacingPressed);
+    connect(&window, &MainWindow::onGenerateGCodePressed, this, &MainPresenter::onGenerateGCodePressed);
 }
 
 void MainPresenter::showDXFImportDialog(std::string inputDXF) {
@@ -106,6 +108,46 @@ void MainPresenter::onOperationConfigOkPressed() {
     // Clear the current operation configuration view and presenter
     currentOpConfigView.reset();
     currentOpConfigPresenter.reset();
+}
+
+void MainPresenter::onGenerateGCodePressed() {
+    spdlog::info("Generate GCode button pressed");
+
+    if (!project || toolpaths.empty()) {
+        spdlog::warn("No project or toolpaths available for GCode generation");
+        return;
+    }
+
+    try {
+        PythonPostProcessor postProcessor(machineConfig, toolTable);
+        std::string gcode = postProcessor.generateGCode(toolpaths);
+
+        if (!gcode.empty()) {
+            // Show save dialog to user
+            QString fileName = QFileDialog::getSaveFileName(
+                &window,
+                "Save GCode File",
+                QString(),
+                "GCode Files (*.gcode *.nc *.cnc);;All Files (*)"
+            );
+
+            if (!fileName.isEmpty()) {
+                std::ofstream file(fileName.toStdString());
+                if (file.is_open()) {
+                    file << gcode;
+                    file.close();
+                    spdlog::info("GCode saved to: {}", fileName.toStdString());
+                } else {
+                    spdlog::error("Failed to save GCode file: {}", fileName.toStdString());
+                }
+            }
+        } else {
+            spdlog::warn("Generated GCode is empty");
+        }
+
+    } catch (const std::exception& e) {
+        spdlog::error("Error generating GCode: {}", e.what());
+    }
 }
 
 void MainPresenter::onOperationConfigCancelPressed() {

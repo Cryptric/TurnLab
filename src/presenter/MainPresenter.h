@@ -42,6 +42,7 @@ private slots:
     void onFacingPressed();
     void onOperationConfigOkPressed();
     void onOperationConfigCancelPressed();
+    void onGenerateGCodePressed();
 
 public:
     MainPresenter();
