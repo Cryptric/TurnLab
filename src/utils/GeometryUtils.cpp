@@ -18,3 +18,17 @@ std::tuple<Point, Point> GeometryUtils::getInnerAndOuterPoint(const Point &p1, c
         return {largerX, smallerX};
     }
 }
+
+std::tuple<Point, Point> GeometryUtils::getChuckAndTailstockPoint(const Line &l, const MachineConfig& config) {
+    return getChuckAndTailstockPoint(l.p1, l.p2, config);
+}
+
+std::tuple<Point, Point> GeometryUtils::getChuckAndTailstockPoint(const Point &p1, const Point &p2, const MachineConfig& config) {
+    const Point& smallerZ = p1.x < p2.x ? p1 : p2;
+    const Point& largerZ = p1.x > p2.x ? p1 : p2;
+    if (config.zAxisDirection == AxisDirection::Positive) {
+        return {smallerZ, largerZ};
+    } else {
+        return {largerZ, smallerZ};
+    }
+}

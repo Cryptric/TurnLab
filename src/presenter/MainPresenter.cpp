@@ -13,6 +13,7 @@
 #include "ProjectUtils.h"
 #include "../utils/ConfigurationManager.h"
 #include "operation/FacingOperationPresenter.h"
+#include "operation/TurningOperationPresenter.h"
 #include "toolpath/ToolpathGenerator.h"
 
 MainPresenter::MainPresenter() : machineConfig(ConfigurationManager::loadMachineConfig()), toolTable(ConfigurationManager::loadToolTable()), window(machineConfig, toolTable), toolpathPlotter(window.getGeometryView()) {
@@ -33,6 +34,7 @@ void MainPresenter::connectSignals() {
     connect(&window, &MainWindow::onLoadDXFPressed, this, [this]() { showDXFImportDialog(); });
 
     connect(&window, &MainWindow::onFacingPressed, this, &MainPresenter::onFacingPressed);
+    connect(&window, &MainWindow::onTurningPressed, this, &MainPresenter::onTurningPressed);
     connect(&window, &MainWindow::onGenerateGCodePressed, this, &MainPresenter::onGenerateGCodePressed);
 }
 
@@ -50,17 +52,29 @@ void MainPresenter::showDXFImportDialog(std::string inputDXF) {
     }
 }
 
-void MainPresenter::onFacingPressed() {
-    spdlog::info("Facing pressed");
-    currentOpConfigView = std::make_unique<OperationConfigurationView>(FacingOperationPresenter::visibility);
-    currentOpConfigPresenter = std::make_unique<FacingOperationPresenter>(machineConfig, toolTable, project->geometry, window.getGeometryView(), *currentOpConfigView);
-
+void MainPresenter::showCurrentOperation() {
     // Connect OK and Cancel button signals
     connect(currentOpConfigView.get(), &OperationConfigurationView::okPressed, this, &MainPresenter::onOperationConfigOkPressed);
     connect(currentOpConfigView.get(), &OperationConfigurationView::cancelPressed, this, &MainPresenter::onOperationConfigCancelPressed);
 
     window.replaceLeftPanel(currentOpConfigView.get());
     window.disableOperationButtons();
+}
+
+void MainPresenter::onFacingPressed() {
+    spdlog::info("Facing pressed");
+    currentOpConfigView = std::make_unique<OperationConfigurationView>(FacingOperationPresenter::visibility);
+    currentOpConfigPresenter = std::make_unique<FacingOperationPresenter>(machineConfig, toolTable, *project, window.getGeometryView(), *currentOpConfigView);
+
+    showCurrentOperation();
+}
+
+void MainPresenter::onTurningPressed() {
+    spdlog::info("Turning pressed");
+    currentOpConfigView = std::make_unique<OperationConfigurationView>(TurningOperationPresenter::visibility);
+    currentOpConfigPresenter = std::make_unique<TurningOperationPresenter>(machineConfig, toolTable, *project, window.getGeometryView(), *currentOpConfigView);
+
+    showCurrentOperation();
 }
 
 void MainPresenter::setProject(Project p) {
@@ -71,14 +85,9 @@ void MainPresenter::setProject(Project p) {
     }
     toolpaths.clear();
     for (const auto& op : p.operations) {
-        toolpaths.push_back(ToolpathGenerator::generateToolpath(op));
+        toolpaths.push_back(ToolpathGenerator::generateToolpath(op, machineConfig));
     }
     toolpathPlotter.plotToolpaths(toolpaths);
-
-    // TODO remove dev call
-    PythonPostProcessor postProcessor(machineConfig, toolTable);
-    postProcessor.generateGCode(toolpaths);
-
 }
 
 void MainPresenter::showMachineConfigDialog() {
@@ -99,7 +108,7 @@ void MainPresenter::onOperationConfigOkPressed() {
     saveProject(*project, project->savePath);
     window.setProject(*project);
 
-    toolpaths.push_back(ToolpathGenerator::generateToolpath(currentOpConfigPresenter->getOperationConfiguration()));
+    toolpaths.push_back(ToolpathGenerator::generateToolpath(currentOpConfigPresenter->getOperationConfiguration(), machineConfig));
 
     window.restoreLeftPanel();
     window.enableOperationButtons();

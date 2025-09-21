@@ -12,7 +12,7 @@
 #include "../view/OperationConfigurationPlotHelper.h"
 #include "../model/MachineConfig.h"
 #include "../model/Tool.h"
-#include "../model/geometry/Geometry.h"
+#include "../model/Project.h"
 #include "../model/operation/OperationConfiguration.h"
 
 enum class OperationConfigTab {
@@ -39,7 +39,7 @@ private:
 protected:
     const MachineConfig& machineConfig;
     OperationConfiguration operationConfig = OperationConfiguration();
-    const Geometry& geometry;
+    const Project& project;
 
     OperationConfigurationView& configView;
     OperationConfigurationPlotHelper plotHelper;
@@ -74,7 +74,7 @@ public:
         const OperationConfigVisibility& opVisibilityConfig,
         const MachineConfig& machineConfig,
         const ToolTable& toolTable,
-        const Geometry& geometry,
+        const Project& project,
         GeometryView& geometryView,
         OperationConfigurationView& operationConfigView,
         QObject* parent = nullptr

@@ -9,14 +9,14 @@
 #include "GeometryUtils.h"
 #include "../model/geometry/Line.h"
 
-FacingOperationPresenter::FacingOperationPresenter(const MachineConfig &machineConfig, const ToolTable &toolTable, const Geometry &geometry, GeometryView &geometryView, OperationConfigurationView &operationConfigView, QObject *parent) : OperationConfigurationPresenter(visibility, machineConfig, toolTable, geometry, geometryView, operationConfigView, parent) {
+FacingOperationPresenter::FacingOperationPresenter(const MachineConfig &machineConfig, const ToolTable &toolTable, const Project &project, GeometryView &geometryView, OperationConfigurationView &operationConfigView, QObject *parent) : OperationConfigurationPresenter(visibility, machineConfig, toolTable, project, geometryView, operationConfigView, parent) {
     operationConfig.operationType = OperationType::Facing;
 }
 
 
 void FacingOperationPresenter::onSegmentSelected(size_t segmentIndex) {
     // first check if it is a line, then check if it is vertical, if not return
-    if (auto line = dynamic_cast<Line*>(geometry.segments[segmentIndex].get())) {
+    if (auto line = dynamic_cast<Line*>(project.geometry.segments[segmentIndex].get())) {
         if (!line->isVertical()) {
             spdlog::warn("Facing operation requires a vertical line segment. Selected segment is not vertical.");
             return;

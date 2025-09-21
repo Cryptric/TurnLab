@@ -48,3 +48,7 @@ double Line::distance(const Point &point) const {
 bool Line::isVertical() const {
     return p1.x == p2.x;
 }
+
+bool Line::isHorizontal() const {
+    return p1.y == p2.y;
+}

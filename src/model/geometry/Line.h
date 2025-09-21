@@ -26,6 +26,7 @@ public:
     double distance(const Point& point) const override;
 
     bool isVertical() const;
+    bool isHorizontal() const;
 
     bool operator==(const Segment& other) const override;
     bool operator!=(const Segment& other) const;

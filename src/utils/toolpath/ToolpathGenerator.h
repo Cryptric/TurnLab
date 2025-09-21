@@ -6,6 +6,7 @@
 #define TURNLAB_TOOLPATHGENERATOR_H
 
 
+#include "../../model/MachineConfig.h"
 #include "../../model/operation/OperationConfiguration.h"
 #include "../../model/toolpath/Toolpath.h"
 
@@ -13,9 +14,10 @@ class ToolpathGenerator {
 
 public:
 
-    static TToolpathSequence generateToolpath(const OperationConfiguration& config);
+    static TToolpathSequence generateToolpath(const OperationConfiguration& config, const MachineConfig& machine_config);
 
     static TToolpathSequence generateFacingToolPath(const OperationConfiguration& config);
+    static TToolpathSequence generateTurningToolPath(const OperationConfiguration& config, const MachineConfig& machine_config);
 
 };
 

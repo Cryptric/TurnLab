@@ -38,8 +38,11 @@ class MainPresenter : public QObject {
     void showMachineConfigDialog();
     void showDXFImportDialog(std::string inputDXF="");
 
+    void showCurrentOperation();
+
 private slots:
     void onFacingPressed();
+    void onTurningPressed();
     void onOperationConfigOkPressed();
     void onOperationConfigCancelPressed();
     void onGenerateGCodePressed();

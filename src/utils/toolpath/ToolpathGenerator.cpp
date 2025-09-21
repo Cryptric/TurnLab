@@ -6,10 +6,14 @@
 
 #include <spdlog/spdlog.h>
 
-TToolpathSequence ToolpathGenerator::generateToolpath(const OperationConfiguration& opConfig) {
+#include "../../model/MachineConfig.h"
+
+TToolpathSequence ToolpathGenerator::generateToolpath(const OperationConfiguration& opConfig, const MachineConfig& machineConfig) {
     switch (opConfig.operationType) {
         case OperationType::Facing:
             return generateFacingToolPath(opConfig);
+        case OperationType::Turning:
+            return generateTurningToolPath(opConfig, machineConfig);
         // Future cases for other operation types
         default:
             spdlog::error("Unsupported operation type for toolpath generation");
@@ -45,12 +49,86 @@ TToolpathSequence ToolpathGenerator::generateFacingToolPath(const OperationConfi
     TLine b2o(backOffPoint, outPoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm);
 
     TToolpathSequence toolpath;
-    toolpath.addToolpath(std::make_unique<TLine>(retractPoint, clearancePoint));
-    toolpath.addToolpath(std::make_unique<TLine>(clearancePoint, feedPoint));
-    toolpath.addToolpath(std::make_unique<TLine>(feedPoint, outerPoint));
-    toolpath.addToolpath(std::make_unique<TLine>(outerPoint, innerPoint));
-    toolpath.addToolpath(std::make_unique<TLine>(innerPoint, backOffPoint));
-    toolpath.addToolpath(std::make_unique<TLine>(backOffPoint, outPoint));
+    toolpath.addToolpath(std::make_unique<TLine>(r2c));
+    toolpath.addToolpath(std::make_unique<TLine>(c2f));
+    toolpath.addToolpath(std::make_unique<TLine>(f2o));
+    toolpath.addToolpath(std::make_unique<TLine>(o2i));
+    toolpath.addToolpath(std::make_unique<TLine>(i2b));
+    toolpath.addToolpath(std::make_unique<TLine>(b2o));
 
     return toolpath;
+}
+
+TToolpathSequence ToolpathGenerator::generateTurningToolPath(const OperationConfiguration &config, const MachineConfig& machineConfig) {
+    spdlog::debug("Generating toolpath for operation: {}", toString(config.operationType));
+    // turning consists of several straight moves
+    // 1. move from retract to clearance distance
+    // 2. move from clearance distance to feed distance
+    // 3. move from feed distance to current outer distance
+    // 4. move to axial end position
+    // 5. back off to feed distance
+    // 6. back off to clearance distance
+    // 7. move to axial start position
+    // goto 2
+    // if inner distance reached:
+    // 8. move to retract
+
+    int toolNumber = config.toolNumber;
+    double feedrate = config.feedrate;
+    double rpm = config.rpm;
+
+    double zStart = config.axialStartPosition + config.axialStartOffset;
+    double zEnd = config.axialEndPosition + config.axialEndOffset;
+
+    double retractDistance = config.outerDistance + config.feedDistance + config.clearanceDistance + config.retractDistance;
+    double clearanceDistance = config.outerDistance + config.feedDistance + config.clearanceDistance;
+    double feedDistance = config.outerDistance + config.feedDistance;
+    double outerDistance = config.outerDistance;
+    double innerDistance = config.innerDistance;
+
+    TPoint retractStartPoint = {retractDistance, zStart};
+    TPoint clearanceStartPoint = {clearanceDistance, zStart};
+    TPoint feedStartPoint = {feedDistance, zStart};
+
+    TPoint feedEndPoint = {feedDistance, zEnd};
+    TPoint clearanceEndPoint = {clearanceDistance, zEnd};
+
+    TToolpathSequence toolpath;
+
+    size_t numPasses = std::ceil(std::abs(outerDistance - innerDistance) / static_cast<double>(config.stepover));
+
+    toolpath.addToolpath(std::make_unique<TLine>(retractStartPoint, clearanceStartPoint, toolNumber, feedrate, rpm));
+
+    double currentDistance = outerDistance;
+    for (size_t i = 0; i < numPasses - 1; i++) {
+        // move to feed distance
+        toolpath.addToolpath(std::make_unique<TLine>(clearanceStartPoint, feedStartPoint, toolNumber, feedrate, rpm));
+        // move to current outer distance + step over
+        currentDistance += config.stepover * (machineConfig.xAxisDirection == AxisDirection::Positive ? -1 : 1);
+        toolpath.addToolpath(std::make_unique<TLine>(feedStartPoint, TPoint(currentDistance, zStart), toolNumber, feedrate, rpm));
+        // move to z end
+        toolpath.addToolpath(std::make_unique<TLine>(TPoint(currentDistance, zStart), TPoint(currentDistance, zEnd), toolNumber, feedrate, rpm));
+        // move out to feed distance
+        toolpath.addToolpath(std::make_unique<TLine>(TPoint(currentDistance, zEnd), feedEndPoint, toolNumber, feedrate, rpm));
+        // move out to clearance distance
+        toolpath.addToolpath(std::make_unique<TLine>(feedEndPoint, clearanceEndPoint, toolNumber, feedrate, rpm));
+        // move to start position
+        toolpath.addToolpath(std::make_unique<TLine>(clearanceEndPoint, clearanceStartPoint, toolNumber, feedrate, rpm));
+    }
+
+    // move to feed distance
+    toolpath.addToolpath(std::make_unique<TLine>(clearanceStartPoint, feedStartPoint, toolNumber, feedrate, rpm));
+    // move to final distance
+    toolpath.addToolpath(std::make_unique<TLine>(feedStartPoint, TPoint(innerDistance, zStart), toolNumber, feedrate, rpm));
+    // move to z end
+    toolpath.addToolpath(std::make_unique<TLine>(TPoint(innerDistance, zStart), TPoint(innerDistance, zEnd), toolNumber, feedrate, rpm));
+    // move out to feed distance
+    toolpath.addToolpath(std::make_unique<TLine>(TPoint(innerDistance, zEnd), feedEndPoint, toolNumber, feedrate, rpm));
+    // move out to clearance distance
+    toolpath.addToolpath(std::make_unique<TLine>(feedEndPoint, clearanceEndPoint, toolNumber, feedrate, rpm));
+    // move to retract distance
+    toolpath.addToolpath(std::make_unique<TLine>(clearanceEndPoint, TPoint(retractDistance, zEnd), toolNumber, feedrate, rpm));
+
+    return toolpath;
+
 }
