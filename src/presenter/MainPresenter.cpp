@@ -13,6 +13,7 @@
 #include "ProjectUtils.h"
 #include "../utils/ConfigurationManager.h"
 #include "operation/FacingOperationPresenter.h"
+#include "operation/PartingOperationPresenter.h"
 #include "operation/TurningOperationPresenter.h"
 #include "toolpath/ToolpathGenerator.h"
 
@@ -35,6 +36,8 @@ void MainPresenter::connectSignals() {
 
     connect(&window, &MainWindow::onFacingPressed, this, &MainPresenter::onFacingPressed);
     connect(&window, &MainWindow::onTurningPressed, this, &MainPresenter::onTurningPressed);
+    connect(&window, &MainWindow::onPartingPressed, this, &MainPresenter::onPartingPressed);
+
     connect(&window, &MainWindow::onGenerateGCodePressed, this, &MainPresenter::onGenerateGCodePressed);
 }
 
@@ -73,6 +76,14 @@ void MainPresenter::onTurningPressed() {
     spdlog::info("Turning pressed");
     currentOpConfigView = std::make_unique<OperationConfigurationView>(TurningOperationPresenter::visibility);
     currentOpConfigPresenter = std::make_unique<TurningOperationPresenter>(machineConfig, toolTable, *project, window.getGeometryView(), *currentOpConfigView);
+
+    showCurrentOperation();
+}
+
+void MainPresenter::onPartingPressed() {
+    spdlog::info("Parting pressed");
+    currentOpConfigView = std::make_unique<OperationConfigurationView>(PartingOperationPresenter::visibility);
+    currentOpConfigPresenter = std::make_unique<PartingOperationPresenter>(machineConfig, toolTable, *project, window.getGeometryView(), *currentOpConfigView);
 
     showCurrentOperation();
 }

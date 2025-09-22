@@ -14,6 +14,8 @@ TToolpathSequence ToolpathGenerator::generateToolpath(const OperationConfigurati
             return generateFacingToolPath(opConfig);
         case OperationType::Turning:
             return generateTurningToolPath(opConfig, machineConfig);
+        case OperationType::Parting:
+            return generatePartingToolPath(opConfig, machineConfig);
         // Future cases for other operation types
         default:
             spdlog::error("Unsupported operation type for toolpath generation");
@@ -131,4 +133,41 @@ TToolpathSequence ToolpathGenerator::generateTurningToolPath(const OperationConf
 
     return toolpath;
 
+}
+
+TToolpathSequence ToolpathGenerator::generatePartingToolPath(const OperationConfiguration& opConfig, const MachineConfig& machineConfig) {
+    spdlog::debug("Generating toolpath for operation: {}", toString(opConfig.operationType));
+
+    double zPos = opConfig.axialStartPosition + opConfig.axialStartOffset;
+    TPoint retractPoint(opConfig.outerDistance + opConfig.feedDistance + opConfig.clearanceDistance + opConfig.retractDistance, zPos);
+    TPoint clearancePoint(opConfig.outerDistance + opConfig.feedDistance + opConfig.clearanceDistance, zPos);
+    TPoint feedPoint(opConfig.outerDistance + opConfig.feedDistance, zPos);
+    TPoint outerPoint(opConfig.outerDistance, zPos);
+    TPoint innerPoint(opConfig.innerDistance, zPos);
+
+
+    TLine r2c(retractPoint, clearancePoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm);
+    TLine c2f(clearancePoint, feedPoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm);
+    TLine f2c(feedPoint, clearancePoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm);
+    TLine c2r(clearancePoint, retractPoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm);
+
+    TToolpathSequence toolpath;
+    toolpath.addToolpath(std::make_unique<TLine>(r2c));
+
+    size_t numPasses = std::ceil(std::abs(outerPoint.x - innerPoint.x) / opConfig.cutDepthPerPass);
+    double currentX = outerPoint.x;
+    for (size_t i = 0; i < numPasses - 1; i++) {
+        toolpath.addToolpath(std::make_unique<TLine>(c2f));
+        currentX += opConfig.cutDepthPerPass * (machineConfig.xAxisDirection == AxisDirection::Positive ? -1 : 1);
+        toolpath.addToolpath(std::make_unique<TLine>(feedPoint, TPoint(currentX, zPos), opConfig.toolNumber, opConfig.feedrate, opConfig.rpm));
+        toolpath.addToolpath(std::make_unique<TLine>(TPoint(currentX, zPos), feedPoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm));
+        toolpath.addToolpath(std::make_unique<TLine>(f2c));
+    }
+    toolpath.addToolpath(std::make_unique<TLine>(c2f));
+    toolpath.addToolpath(std::make_unique<TLine>(feedPoint, innerPoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm));
+    toolpath.addToolpath(std::make_unique<TLine>(innerPoint, feedPoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm));
+    toolpath.addToolpath(std::make_unique<TLine>(f2c));
+    toolpath.addToolpath(std::make_unique<TLine>(c2r));
+
+    return toolpath;
 }

@@ -43,6 +43,9 @@ class MainPresenter : public QObject {
 private slots:
     void onFacingPressed();
     void onTurningPressed();
+    void onPartingPressed();
+
+
     void onOperationConfigOkPressed();
     void onOperationConfigCancelPressed();
     void onGenerateGCodePressed();

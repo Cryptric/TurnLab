@@ -116,6 +116,8 @@ add_executable(TurnLab
         src/utils/postprocessor/python_bindings.h
         src/presenter/operation/TurningOperationPresenter.cpp
         src/presenter/operation/TurningOperationPresenter.h
+        src/presenter/operation/PartingOperationPresenter.cpp
+        src/presenter/operation/PartingOperationPresenter.h
 )
 
 target_link_libraries(TurnLab
