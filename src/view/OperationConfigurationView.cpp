@@ -272,11 +272,17 @@ void OperationConfigurationView::setToolTable(const ToolTable& toolTable) {
 
 void OperationConfigurationView::setOperationConfiguration(const OperationConfiguration& config) {
     // Set tool configuration values
-    for (int i = 0; i < toolSelector->count(); ++i) {
+    int i = 0;
+    for (; i < toolSelector->count(); ++i) {
         if (toolSelector->itemData(i).toInt() == config.toolNumber) {
             toolSelector->setCurrentIndex(i);
             break;
         }
+    }
+    if (i == toolSelector->count()) {
+        toolSelector->setCurrentIndex(0);
+        const int toolNumber = toolSelector->itemData(0).toInt();
+        emit toolSelectionChanged(toolNumber);
     }
     rpmInput->setValue(config.rpm);
     feedrateInput->setValue(config.feedrate);

@@ -26,6 +26,7 @@ OperationConfigurationPresenter::OperationConfigurationPresenter(
     populateToolSelector();
     connectSignals();
     applyConfiguration();
+    operationConfigView.setOperationConfiguration(operationConfig);
 }
 
 void OperationConfigurationPresenter::connectSignals() {
