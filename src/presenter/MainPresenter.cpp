@@ -146,9 +146,9 @@ void MainPresenter::onGenerateGCodePressed() {
             // Show save dialog to user
             QString fileName = QFileDialog::getSaveFileName(
                 &window,
-                "Save GCode File",
+                "Save NC File",
                 QString(),
-                "GCode Files (*.gcode *.nc *.cnc);;All Files (*)"
+                "NC Files (*.nc)"
             );
 
             if (!fileName.isEmpty()) {
