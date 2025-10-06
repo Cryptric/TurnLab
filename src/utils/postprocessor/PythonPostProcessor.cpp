@@ -52,11 +52,7 @@ void PythonPostProcessor::loadModules() {
 std::string PythonPostProcessor::processToolpath(const std::unique_ptr<TToolpath>& toolpath, PostProcessorState& state) {
     std::string gcode;
 
-    // Handle tool changes
-    if (state.currentTool != toolpath->toolNumber) {
-        gcode += callPostProcessor("tool_change", toolpath->toolNumber);
-        state.currentTool = toolpath->toolNumber;
-    }
+    gcode += setupTool(toolpath, state);
 
     // Handle spindle speed changes
     if (state.currentRpm != toolpath->rpm) {
@@ -75,6 +71,15 @@ std::string PythonPostProcessor::processToolpath(const std::unique_ptr<TToolpath
     return gcode;
 }
 
+std::string PythonPostProcessor::setupTool(const std::unique_ptr<TToolpath>& toolpath, PostProcessorState& state) {
+    std::string gcode = "";
+    if (state.currentTool != toolpath->toolNumber) {
+        gcode += callPostProcessor("tool_change", toolpath->toolNumber);
+        state.currentTool = toolpath->toolNumber;
+    }
+    return gcode;
+}
+
 std::string PythonPostProcessor::generateGCode(const std::vector<TToolpathSequence>& toolpaths) {
     spdlog::info("PythonPostProcessor::generateGCode() called with {} toolpath sequences", toolpaths.size());
 
@@ -89,6 +94,8 @@ std::string PythonPostProcessor::generateGCode(const std::vector<TToolpathSequen
 
         // Process each toolpath sequence
         for (const auto& sequence : toolpaths) {
+            gcode += setupTool(sequence.toolpaths[0], state);
+            gcode += callPostProcessor("rapid_move", sequence.toolpaths[0]->getStartPosition(), 100.0);
             for (const auto& toolpath : sequence.toolpaths) {
                 gcode += processToolpath(toolpath, state);
             }

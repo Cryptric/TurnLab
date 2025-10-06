@@ -21,6 +21,10 @@ public:
     TLine(double startX, double startZ, double endX, double endZ, int toolNumber = 0, double feedRate = 100.0, double rpm = 1000.0)
         : TToolpath(TToolpathType::Line, toolNumber, feedRate, rpm), start(startX, startZ), end(endX, endZ) {}
 
+    TPoint getStartPosition() override {
+        return start;
+    }
+
     nlohmann::json toJson() const override {
         nlohmann::json j;
         j["toolNumber"] = toolNumber;

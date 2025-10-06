@@ -7,6 +7,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include "TPoint.h"
+
 enum class TToolpathType {
     Line
 };
@@ -33,6 +35,9 @@ public:
         : type(type), toolNumber(toolNumber), feedRate(feedRate), rpm(rpm) {}
 
     virtual ~TToolpath() = default;
+
+    virtual TPoint getStartPosition() = 0;
+
 
     // Pure virtual method for JSON serialization
     virtual nlohmann::json toJson() const = 0;

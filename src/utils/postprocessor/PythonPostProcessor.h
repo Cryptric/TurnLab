@@ -30,6 +30,8 @@ class PythonPostProcessor {
     void loadModules();
     std::string processToolpath(const std::unique_ptr<TToolpath>& toolpath, PostProcessorState& state);
 
+    std::string setupTool(const std::unique_ptr<TToolpath> &toolpath, PostProcessorState &state);
+
     template<typename... Args>
     std::string callPostProcessor(const std::string& method, Args&&... args) {
         return pyPostProcessor.attr(method.c_str())(std::forward<Args>(args)...).template cast<std::string>();

@@ -22,7 +22,7 @@ public:
     PostProcessor(MachineConfig config, ToolTable toolTable) : config(config), toolTable(toolTable) {}
     virtual ~PostProcessor() = default;
 
-    virtual std::string rapidMove(TPoint point) { return ""; }
+    virtual std::string rapidMove(TPoint point, double feedrate) { return ""; }
     virtual std::string linearMove(TPoint point, double feedrate) { return ""; }
     virtual std::string spindleOn(double rpm) { return ""; }
     virtual std::string spindleOff() { return ""; }
