@@ -21,6 +21,7 @@ void MachineConfigDialog::setupUI() {
 
     setupAxisDirectionGroup();
     setupMachineLimitsGroup();
+    setupFeedRateSettingsGroup();
     setupDisplaySettingsGroup();
     setupPostProcessorGroup();
 
@@ -33,6 +34,7 @@ void MachineConfigDialog::setupUI() {
     // Add to main layout
     mainLayout->addWidget(axisDirectionGroup);
     mainLayout->addWidget(machineLimitsGroup);
+    mainLayout->addWidget(feedRatesGroup);
     mainLayout->addWidget(displaySettingsGroup);
     mainLayout->addWidget(postProcessorGroup);
     mainLayout->addWidget(restoreDefaultsButton);
@@ -125,6 +127,24 @@ void MachineConfigDialog::setupMachineLimitsGroup() {
     machineLimitsLayout->addRow("Minimum Clearance Distance:", minClearanceDistanceSpinBox);
 }
 
+void MachineConfigDialog::setupFeedRateSettingsGroup() {
+    feedRatesGroup = new QGroupBox("Feed Rate Settings", this);
+    feedRatesLayout = new QFormLayout(feedRatesGroup);
+
+    rapidFeedRateSpinBox = new QDoubleSpinBox(this);
+    rapidFeedRateSpinBox->setRange(0.0, 10000.0);
+    rapidFeedRateSpinBox->setSuffix(" mm/min");
+    rapidFeedRateSpinBox->setDecimals(1);
+
+    retractFeedRateSpinBox = new QDoubleSpinBox(this);
+    retractFeedRateSpinBox->setRange(0.0, 10000.0);
+    retractFeedRateSpinBox->setSuffix(" mm/min");
+    retractFeedRateSpinBox->setDecimals(1);
+
+    feedRatesLayout->addRow("Rapid Feed Rate:", rapidFeedRateSpinBox);
+    feedRatesLayout->addRow("Retract Feed Rate:", retractFeedRateSpinBox);
+}
+
 void MachineConfigDialog::setupDisplaySettingsGroup() {
     displaySettingsGroup = new QGroupBox("Display Settings", this);
     displaySettingsLayout = new QFormLayout(displaySettingsGroup);
@@ -194,6 +214,10 @@ void MachineConfigDialog::updateUIFromConfig(const MachineConfig& config) {
     maxZTravelSpinBox->setValue(config.maxZTravel);
     maxXRadiusSpinBox->setValue(config.maxXRadius);
     minClearanceDistanceSpinBox->setValue(config.minClearanceDistance);
+
+    // Feed rates
+    rapidFeedRateSpinBox->setValue(config.rapidFeedRate);
+    retractFeedRateSpinBox->setValue(config.retractFeedRate);
     
     // Display settings
     displayPrecisionSpinBox->setValue(config.displayPrecision);
@@ -219,6 +243,10 @@ MachineConfig MachineConfigDialog::getConfigFromUI() const {
     config.maxZTravel = maxZTravelSpinBox->value();
     config.maxXRadius = maxXRadiusSpinBox->value();
     config.minClearanceDistance = minClearanceDistanceSpinBox->value();
+
+    // Feed rates
+    config.rapidFeedRate = rapidFeedRateSpinBox->value();
+    config.retractFeedRate = retractFeedRateSpinBox->value();
     
     // Display settings
     config.displayPrecision = displayPrecisionSpinBox->value();

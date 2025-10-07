@@ -25,6 +25,10 @@ struct MachineConfig {
     double maxZTravel = 300.0;            // Maximum Z travel distance in mm
     double maxXRadius = 150.0;            // Maximum X radius in mm
     double minClearanceDistance = 5.0;    // Minimum clearance distance for safety in mm
+
+    // Feed rates
+    double rapidFeedRate = 200.0;        // Rapid move feed rate in mm/min
+    double retractFeedRate = 150.0;      // Retract move feed rate in mm/min
     
     // Display Settings
     int displayPrecision = 3;             // Number of decimal places for coordinates
@@ -45,6 +49,8 @@ struct MachineConfig {
         maxZTravel,
         maxXRadius,
         minClearanceDistance,
+        rapidFeedRate,
+        retractFeedRate,
         displayPrecision,
         postprocessorScriptPath,
         postprocessorClassName

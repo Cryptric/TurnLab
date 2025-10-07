@@ -42,6 +42,7 @@ private:
     void setupUI();
     void setupAxisDirectionGroup();
     void setupMachineLimitsGroup();
+    void setupFeedRateSettingsGroup();
     void setupDisplaySettingsGroup();
     void setupPostProcessorGroup();
     void connectSignals();
@@ -75,6 +76,13 @@ private:
     QDoubleSpinBox* maxZTravelSpinBox;
     QDoubleSpinBox* maxXRadiusSpinBox;
     QDoubleSpinBox* minClearanceDistanceSpinBox;
+
+    // Feed rates
+    QGroupBox* feedRatesGroup;
+    QFormLayout* feedRatesLayout;
+
+    QDoubleSpinBox* rapidFeedRateSpinBox;
+    QDoubleSpinBox* retractFeedRateSpinBox;
     
     // Display Settings
     QGroupBox* displaySettingsGroup;
