@@ -16,7 +16,7 @@ public:
 
     static TToolpathSequence generateToolpath(const OperationConfiguration& config, const MachineConfig& machine_config);
 
-    static TToolpathSequence generateFacingToolPath(const OperationConfiguration& config);
+    static TToolpathSequence generateFacingToolPath(const OperationConfiguration& config, const MachineConfig &machineConfig);
     static TToolpathSequence generateTurningToolPath(const OperationConfiguration& config, const MachineConfig& machine_config);
     static TToolpathSequence generatePartingToolPath(const OperationConfiguration &opConfig, const MachineConfig &machineConfig);
 };

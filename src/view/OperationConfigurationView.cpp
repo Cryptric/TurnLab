@@ -124,11 +124,11 @@ void OperationConfigurationView::setupUI() {
     innerDistanceInput->setValue(5.0);
     innerDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
+    if (config.showInnerDistance) radiiFormLayout->addRow("Inner Distance:", innerDistanceInput);
+    if (config.showOuterDistance) radiiFormLayout->addRow("Outer Distance:", outerDistanceInput);
+    if (config.showFeedDistance) radiiFormLayout->addRow("Feed Distance:", feedDistanceInput);
     if (config.showRetractDistance) radiiFormLayout->addRow("Retract Distance:", retractDistanceInput);
     if (config.showClearanceDistance) radiiFormLayout->addRow("Clearance Distance:", clearanceDistanceInput);
-    if (config.showFeedDistance) radiiFormLayout->addRow("Feed Distance:", feedDistanceInput);
-    if (config.showOuterDistance) radiiFormLayout->addRow("Outer Distance:", outerDistanceInput);
-    if (config.showInnerDistance) radiiFormLayout->addRow("Inner Distance:", innerDistanceInput);
 
     // Setup passes tab
     stepoverInput = new QDoubleSpinBox();

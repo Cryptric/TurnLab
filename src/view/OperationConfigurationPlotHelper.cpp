@@ -101,8 +101,8 @@ void OperationConfigurationPlotHelper::hideAxialOffsetMarkers() {
 }
 
 void OperationConfigurationPlotHelper::update() {
-    retractDistanceMarker.setYValue(operationConfig.retractDistance + operationConfig.clearanceDistance + operationConfig.feedDistance + operationConfig.outerDistance);
-    clearanceDistanceMarker.setYValue(operationConfig.clearanceDistance + operationConfig.feedDistance + operationConfig.outerDistance);
+    clearanceDistanceMarker.setYValue(operationConfig.clearanceDistance + operationConfig.retractDistance + operationConfig.feedDistance + operationConfig.outerDistance);
+    retractDistanceMarker.setYValue(operationConfig.retractDistance + operationConfig.feedDistance + operationConfig.outerDistance);
     feedDistanceMarker.setYValue(operationConfig.feedDistance + operationConfig.outerDistance);
     outerDistanceMarker.setYValue(operationConfig.outerDistance);
     innerDistanceMarker.setYValue(operationConfig.innerDistance);
