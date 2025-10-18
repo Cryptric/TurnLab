@@ -23,6 +23,7 @@ void FacingOperationPresenter::onSegmentSelected(size_t segmentIndex) {
         }
         OperationConfigurationPresenter::onSegmentSelected(segmentIndex);
         operationConfig.axialStartPosition = line->p1.x;
+        operationConfig.axialEndPosition = line->p1.x;
 
         auto [innerP, outerP] = GeometryUtils::getInnerAndOuterPoint(*line, machineConfig);
 

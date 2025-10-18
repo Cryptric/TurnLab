@@ -163,11 +163,19 @@ void OperationConfigurationView::setupUI() {
     dwellTimeInput->setValue(500);
     dwellTimeInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
+    backoffDistanceInput = new QDoubleSpinBox();
+    backoffDistanceInput->setRange(0.0, 100.0);
+    backoffDistanceInput->setSuffix(" mm");
+    backoffDistanceInput->setDecimals(2);
+    backoffDistanceInput->setValue(1.0);
+    backoffDistanceInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
     if (config.showStepover) passesLayout->addRow("Stepover:", stepoverInput);
     if (config.showCutDepthPerPass) passesLayout->addRow("Cut Depth per Pass:", cutDepthPerPassInput);
     if (config.showSpringPasses) passesLayout->addRow("Spring Passes:", springPassesInput);
     if (config.showPeckDepth) passesLayout->addRow("Peck Depth:", peckDepthInput);
     if (config.showDwellTime) passesLayout->addRow("Dwell Time:", dwellTimeInput);
+    if (config.showBackoffDistance) passesLayout->addRow("Backoff Distance:", backoffDistanceInput);
 
     // Add tabs to the tab widget based on visibility configuration
     if (config.showToolTab) tabWidget->addTab(toolTab, "Tool");
@@ -248,6 +256,9 @@ void OperationConfigurationView::connectSignals() {
     connect(dwellTimeInput, QOverload<int>::of(&QSpinBox::valueChanged),
             this, &OperationConfigurationView::dwellTimeChanged);
 
+    connect(backoffDistanceInput, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &OperationConfigurationView::backoffDistanceChanged);
+
     // Button connections
     connect(okButton, &QPushButton::clicked, this, &OperationConfigurationView::okPressed);
     connect(cancelButton, &QPushButton::clicked, this, &OperationConfigurationView::cancelPressed);
@@ -304,4 +315,5 @@ void OperationConfigurationView::setOperationConfiguration(const OperationConfig
     springPassesInput->setValue(config.springPasses);
     peckDepthInput->setValue(config.peckDepth);
     dwellTimeInput->setValue(config.dwellTime);
+    backoffDistanceInput->setValue(config.backoffDistance);
 }

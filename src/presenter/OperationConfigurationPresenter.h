@@ -68,6 +68,7 @@ protected slots:
     void onSpringPassesChanged(int passes);
     void onPeckDepthChanged(double depth);
     void onDwellTimeChanged(int time);
+    void onBackoffDistanceChanged(double distance);
 
 public:
     explicit OperationConfigurationPresenter(

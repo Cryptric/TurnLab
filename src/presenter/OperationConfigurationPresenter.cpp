@@ -73,6 +73,8 @@ void OperationConfigurationPresenter::connectSignals() {
             this, &OperationConfigurationPresenter::onPeckDepthChanged);
     connect(&configView, &OperationConfigurationView::dwellTimeChanged,
             this, &OperationConfigurationPresenter::onDwellTimeChanged);
+    connect(&configView, &OperationConfigurationView::backoffDistanceChanged,
+            this, &OperationConfigurationPresenter::onBackoffDistanceChanged);
 
     // Connect geometry view signals
     connect(&geometryView, &GeometryView::segmentSelected,
@@ -213,6 +215,12 @@ void OperationConfigurationPresenter::onPeckDepthChanged(double depth) {
 void OperationConfigurationPresenter::onDwellTimeChanged(int time) {
     spdlog::debug("Dwell time changed to: {}", time);
     operationConfig.dwellTime = time;
+    emit configurationChanged();
+}
+
+void OperationConfigurationPresenter::onBackoffDistanceChanged(double distance) {
+    spdlog::debug("Backoff distance changed to: {}", distance);
+    operationConfig.backoffDistance = distance;
     emit configurationChanged();
 }
 

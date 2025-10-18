@@ -32,6 +32,7 @@ public:
         .showGeometrySelection = true,
         .singleSegmentSelection = true,
         .showAxialStartOffset = true,
+        .showAxialEndOffset = true,
 
         .showRetractDistance = true,
         .showClearanceDistance = true,
@@ -39,9 +40,13 @@ public:
         .showOuterDistance = true,
         .showInnerDistance = true,
 
+        .showStepover = true,
+        .showBackoffDistance = true,
+
         .showToolTab = true,
         .showGeometryTab = true,
-        .showRadiiTab = true
+        .showRadiiTab = true,
+        .showPassesTab = true,
     };
 };
 

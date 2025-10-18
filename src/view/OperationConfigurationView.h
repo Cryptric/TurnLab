@@ -42,6 +42,7 @@ class OperationConfigurationView : public QWidget {
     QSpinBox* springPassesInput;
     QDoubleSpinBox* peckDepthInput;
     QSpinBox* dwellTimeInput;
+    QDoubleSpinBox* backoffDistanceInput;
 
     QPushButton* okButton;
     QPushButton* cancelButton;
@@ -82,6 +83,7 @@ class OperationConfigurationView : public QWidget {
         void springPassesChanged(int passes);
         void peckDepthChanged(double depth);
         void dwellTimeChanged(int time);
+        void backoffDistanceChanged(double distance);
 
         // Button signals
         void okPressed();

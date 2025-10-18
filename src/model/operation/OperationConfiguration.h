@@ -66,6 +66,7 @@ struct OperationConfiguration {
     int springPasses = 1;
     double peckDepth = 3.0;         // mm
     int dwellTime = 500;            // ms
+    double backoffDistance = 1.0;   // mm
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(OperationConfiguration,
         operationType,
@@ -73,7 +74,7 @@ struct OperationConfiguration {
         geometrySelection,
         axialStartPosition, axialEndPosition, axialStartOffset, axialEndOffset,
         retractDistance, clearanceDistance, feedDistance, outerDistance, innerDistance,
-        stepover, cutDepthPerPass, springPasses, peckDepth, dwellTime)
+        stepover, cutDepthPerPass, springPasses, peckDepth, dwellTime, backoffDistance)
 };
 
 struct OperationConfigVisibility {
@@ -101,6 +102,7 @@ struct OperationConfigVisibility {
     bool showSpringPasses = false;
     bool showPeckDepth = false;
     bool showDwellTime = false;
+    bool showBackoffDistance = false;
 
     // Tab visibility
     bool showToolTab = false;
@@ -112,7 +114,7 @@ struct OperationConfigVisibility {
         showToolSelector, showRpmInput, showFeedrateInput,
         showGeometrySelection, singleSegmentSelection, showAxialStartOffset, showAxialEndOffset,
         showRetractDistance, showClearanceDistance, showFeedDistance, showOuterDistance, showInnerDistance,
-        showStepover, showCutDepthPerPass, showSpringPasses, showPeckDepth, showDwellTime,
+        showStepover, showCutDepthPerPass, showSpringPasses, showPeckDepth, showDwellTime, showBackoffDistance,
         showToolTab, showGeometryTab, showRadiiTab, showPassesTab)
 };
 
