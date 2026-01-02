@@ -12,7 +12,6 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
-        Charts
         REQUIRED)
 
 find_package(spdlog REQUIRED)
@@ -109,7 +108,6 @@ target_link_libraries(TurnLab
         Qt::Core
         Qt::Gui
         Qt::Widgets
-        Qt::Charts
         ${QWT_LIBRARIES}
         pybind11::embed
 )
