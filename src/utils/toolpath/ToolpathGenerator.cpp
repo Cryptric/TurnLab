@@ -172,7 +172,7 @@ TToolpathSequence ToolpathGenerator::generatePartingToolPath(const OperationConf
     }
     toolpath.addToolpath(std::make_unique<TLine>(r2f));
     toolpath.addToolpath(std::make_unique<TLine>(feedPoint, innerPoint, opConfig.toolNumber, opConfig.feedrate, opConfig.rpm));
-    toolpath.addToolpath(std::make_unique<TLine>(innerPoint, retractPoint, opConfig.toolNumber, opConfig.retractDistance, opConfig.rpm));
+    toolpath.addToolpath(std::make_unique<TLine>(innerPoint, retractPoint, opConfig.toolNumber, machineConfig.retractFeedRate, opConfig.rpm));
     toolpath.addToolpath(std::make_unique<TLine>(r2c));
 
     return toolpath;
