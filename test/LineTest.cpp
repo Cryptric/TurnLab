@@ -347,6 +347,9 @@ TEST_F(LineTest, EqualityWithDifferentSegmentTypes) {
     public:
         double distance(const Point& point) const override { return 0.0; }
         bool operator==(const Segment& other) const override { return false; }
+        std::unique_ptr<Segment> transform(const std::vector<Transform>& transformations) override {
+            return std::make_unique<MockSegment>();
+        }
         std::unique_ptr<Segment> clone() const override { return std::make_unique<MockSegment>(); }
     };
     

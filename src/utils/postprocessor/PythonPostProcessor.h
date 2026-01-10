@@ -7,7 +7,7 @@
 
 #include <string>
 #include <vector>
-#include <pybind11/pybind11.h>
+#include <memory>
 
 #include "../../model/MachineConfig.h"
 #include "../../model/Tool.h"
@@ -21,28 +21,25 @@ struct PostProcessorState {
 };
 
 class PythonPostProcessor {
+    struct Impl;  // Forward declaration
 
     const MachineConfig& machineConfig;
     const ToolTable& toolTable;
 
-    pybind11::object pyPostProcessor; // Store the Python pyPostProcessor instance
+    std::unique_ptr<Impl> pImpl;  // Pointer to implementation
 
     void loadModules();
     std::string processToolpath(const std::unique_ptr<TToolpath>& toolpath, PostProcessorState& state);
-
     std::string setupTool(const std::unique_ptr<TToolpath> &toolpath, PostProcessorState &state);
 
     template<typename... Args>
-    std::string callPostProcessor(const std::string& method, Args&&... args) {
-        return pyPostProcessor.attr(method.c_str())(std::forward<Args>(args)...).template cast<std::string>();
-    }
+    std::string callPostProcessor(const std::string& method, Args&&... args);
 
 public:
     PythonPostProcessor(const MachineConfig& config, const ToolTable& tools);
-
+    ~PythonPostProcessor();  // Required for unique_ptr with forward-declared type
 
     std::string generateGCode(const std::vector<TToolpathSequence>& toolpaths);
-
 };
 
 

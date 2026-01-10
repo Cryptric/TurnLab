@@ -1,0 +1,107 @@
+name: Build Linux Executable
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          ninja-build \
+          pkg-config \
+          qt6-base-dev \
+          qt6-base-dev-tools \
+          qt6-svg-dev \
+          python3-dev \
+          python3-pybind11 \
+          libspdlog-dev \
+          nlohmann-json3-dev \
+          libgtest-dev
+
+    - name: Build and install QWT for Qt6
+      run: |
+        git clone https://git.code.sf.net/p/qwt/git qwt
+        cd qwt
+        git checkout qwt-6.3
+        qmake6 qwt.pro
+        make -j$(nproc)
+        sudo make install
+        sudo mkdir -p /usr/local/lib/pkgconfig
+        sudo ln -sf /usr/local/qwt-6.3.1-dev/lib/pkgconfig/Qt6Qwt6.pc /usr/local/lib/pkgconfig/Qt6Qwt6.pc
+
+    - name: Build and install dime
+      run: |
+        git clone https://github.com/coin3d/dime.git
+        cd dime
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build . -j$(nproc)
+        make install
+
+    - name: Build with CMake
+      uses: threeal/cmake-action@v2.1.0
+      with:
+        generator: Ninja
+        build-dir: build
+        options: CMAKE_BUILD_TYPE=Release
+
+    - name: Run tests
+      run: |
+        cd build
+        ctest --output-on-failure
+      continue-on-error: true
+
+    - name: Setup AppDir structure
+      run: |
+        mkdir -p AppDir/usr/bin
+        cp build/TurnLab AppDir/usr/bin/
+        chmod +x AppDir/usr/bin/TurnLab
+
+    - name: Create desktop file
+      run: |
+        cat > AppDir/turnlab.desktop << 'EOF'
+        [Desktop Entry]
+        Type=Application
+        Name=TurnLab
+        Comment=CNC Turning Software
+        Exec=TurnLab
+        Icon=turnlab
+        Categories=Development;Engineering;
+        Terminal=false
+        EOF
+
+    - name: Create AppImage icon
+      run: |
+        if [ -f res/icons/app-icon.png ]; then
+          cp res/icons/app-icon.png AppDir/turnlab.png
+        else
+          # Create a placeholder 256x256 PNG
+          sudo apt-get install -y imagemagick 2>/dev/null || true
+          convert -size 256x256 xc:blue -fill white -pointsize 72 -gravity center \
+            -annotate +0+0 "TL" AppDir/turnlab.png 2>/dev/null || \
+          echo "No icon - will use default"
+        fi
+
+    - name: Build AppImage
+      uses: AppImageCrafters/build-appimage-action@v1.3
+      with:
+        recipe: AppImageBuilder.yml
+
+    - name: Upload AppImage
+      uses: actions/upload-artifact@v4
+      with:
+        name: TurnLab-AppImage
+        path: '*.AppImage'

@@ -20,8 +20,8 @@ DXFImportPresenter::DXFImportPresenter(const std::string& dxfFilePath, const Mac
     
     // Load the DXF file immediately
     if (!loadDXFFile(QString::fromStdString(dxfFilePath))) {
-        QMessageBox::warning(parent, "DXF Import Error", 
-                           QString("Failed to load DXF file: %1").arg(dxfFilePath));
+        QMessageBox::warning(parent, "DXF Import Error",
+                           QString("Failed to load DXF file: %1").arg(QString::fromStdString(dxfFilePath)));
     }
 }
 

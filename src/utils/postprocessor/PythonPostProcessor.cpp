@@ -12,9 +12,23 @@
 
 namespace py = pybind11;
 
-PythonPostProcessor::PythonPostProcessor(const MachineConfig& config, const ToolTable& tools) : machineConfig(config), toolTable(tools) {
+// Define the implementation struct with hidden visibility to match pybind11
+struct __attribute__((visibility("hidden"))) PythonPostProcessor::Impl {
+    pybind11::object pyPostProcessor;  // Store the Python postprocessor instance
+};
+
+// Template implementation must be in the .cpp file now
+template<typename... Args>
+std::string PythonPostProcessor::callPostProcessor(const std::string& method, Args&&... args) {
+    return pImpl->pyPostProcessor.attr(method.c_str())(std::forward<Args>(args)...).template cast<std::string>();
+}
+
+PythonPostProcessor::PythonPostProcessor(const MachineConfig& config, const ToolTable& tools)
+    : machineConfig(config), toolTable(tools), pImpl(std::make_unique<Impl>()) {
     spdlog::debug("Creating PythonPostProcessor");
 }
+
+PythonPostProcessor::~PythonPostProcessor() = default;
 
 void PythonPostProcessor::loadModules() {
     try {
@@ -40,7 +54,7 @@ void PythonPostProcessor::loadModules() {
         spdlog::info("Importing module: {} from directory: {}", scriptName, scriptDir);
         py::module script = py::module::import(scriptName.c_str());
         py::object postprocessorClass = script.attr(machineConfig.postprocessorClassName.c_str());
-        pyPostProcessor = postprocessorClass(machineConfig, toolTable);
+        pImpl->pyPostProcessor = postprocessorClass(machineConfig, toolTable);
         spdlog::info("PostProcessor instance created successfully");
 
     } catch (const std::exception& e) {
@@ -109,7 +123,7 @@ std::string PythonPostProcessor::generateGCode(const std::vector<TToolpathSequen
         spdlog::info("Generated {} characters of GCode", gcode.length());
 
         // Release Python objects before interpreter destruction
-        pyPostProcessor = py::none();
+        pImpl->pyPostProcessor = py::none();
 
         return gcode;
 
@@ -117,7 +131,7 @@ std::string PythonPostProcessor::generateGCode(const std::vector<TToolpathSequen
         spdlog::error("Error generating GCode: {}", e.what());
 
         // Release Python objects before interpreter destruction
-        pyPostProcessor = py::none();
+        pImpl->pyPostProcessor = py::none();
 
         return "";
     }

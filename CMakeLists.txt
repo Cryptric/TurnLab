@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.28)
+
+set(CMAKE_CXX_STANDARD 20)
 
 project(TurnLab LANGUAGES CXX C)
 
@@ -14,14 +16,14 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-find_package(spdlog REQUIRED)
 find_package(dime REQUIRED)
+
+find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
 find_package(pybind11 REQUIRED)
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-# Find QWT using pkg-config
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(QWT REQUIRED Qt6Qwt6)
 
@@ -49,13 +51,16 @@ add_library(TurnLabCore STATIC
 target_include_directories(TurnLabCore PUBLIC
         src/model/geometry
         src/utils
+        ${DIME_INCLUDE_DIRS}
 )
 
 target_link_libraries(TurnLabCore PUBLIC
         spdlog::spdlog
-        dime
+        ${DIME_LIBRARIES}
         nlohmann_json::nlohmann_json
 )
+
+target_compile_options(TurnLabCore PUBLIC ${DIME_CFLAGS_OTHER})
 
 qt6_add_resources(QT_RESOURCES resources.qrc)
 
@@ -109,10 +114,12 @@ target_link_libraries(TurnLab
         Qt::Gui
         Qt::Widgets
         ${QWT_LIBRARIES}
-        pybind11::embed
-)
+        pybind11::embed)
+
 target_include_directories(TurnLab PRIVATE ${QWT_INCLUDE_DIRS})
+target_link_directories(TurnLab PRIVATE ${QWT_LIBRARY_DIRS})
 target_compile_options(TurnLab PRIVATE ${QWT_CFLAGS_OTHER})
+
 
 # Include test configuration
 add_subdirectory(test)
