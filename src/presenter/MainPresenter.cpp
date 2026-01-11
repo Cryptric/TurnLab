@@ -39,6 +39,8 @@ void MainPresenter::connectSignals() {
     connect(&window, &MainWindow::onPartingPressed, this, &MainPresenter::onPartingPressed);
 
     connect(&window, &MainWindow::onGenerateGCodePressed, this, &MainPresenter::onGenerateGCodePressed);
+
+    connect(&window.getLeftPanel(), &LeftPanel::operationDeleteRequested, this, &MainPresenter::onOperationDeleteRequested);
 }
 
 void MainPresenter::showDXFImportDialog(std::string inputDXF) {
@@ -86,6 +88,35 @@ void MainPresenter::onPartingPressed() {
     currentOpConfigPresenter = std::make_unique<PartingOperationPresenter>(machineConfig, toolTable, *project, window.getGeometryView(), *currentOpConfigView);
 
     showCurrentOperation();
+}
+
+void MainPresenter::onOperationDeleteRequested(int index) {
+    spdlog::info("Delete operation requested for index: {}", index);
+
+    if (!project) {
+        spdlog::warn("No project loaded");
+        return;
+    }
+
+    if (index < 0 || index >= static_cast<int>(project->operations.size())) {
+        spdlog::warn("Invalid operation index: {}", index);
+        return;
+    }
+
+    // Remove operation from project
+    project->operations.erase(project->operations.begin() + index);
+
+    // Remove corresponding toolpath
+    if (index < static_cast<int>(toolpaths.size())) {
+        toolpaths.erase(toolpaths.begin() + index);
+    }
+
+    // Save and update UI
+    saveProject(*project, project->savePath);
+    window.setProject(*project);
+    toolpathPlotter.plotToolpaths(toolpaths);
+
+    spdlog::info("Operation deleted successfully");
 }
 
 void MainPresenter::setProject(Project p) {

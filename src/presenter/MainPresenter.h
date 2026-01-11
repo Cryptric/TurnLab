@@ -45,6 +45,7 @@ private slots:
     void onTurningPressed();
     void onPartingPressed();
 
+    void onOperationDeleteRequested(int index);
 
     void onOperationConfigOkPressed();
     void onOperationConfigCancelPressed();

@@ -60,6 +60,7 @@ public:
     void setProject(const Project& project) const;
 
     GeometryView &getGeometryView() const;
+    LeftPanel &getLeftPanel() const;
 
     void enableOperationButtons();
     void disableOperationButtons();

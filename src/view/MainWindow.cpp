@@ -107,6 +107,10 @@ GeometryView& MainWindow::getGeometryView() const {
     return *geometryView;
 }
 
+LeftPanel& MainWindow::getLeftPanel() const {
+    return *leftPanel;
+}
+
 void MainWindow::enableOperationButtons() {
     facingAction->setEnabled(true);
     turningAction->setEnabled(true);

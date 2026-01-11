@@ -34,10 +34,18 @@ public:
 
     void setProject(const Project& p);
 
+signals:
+    void operationDeleteRequested(int index);
+    void operationEditRequested(int index);
+
+private slots:
+    void showContextMenu(const QPoint& pos);
+
 private:
     void setupUI();
     void setupTreeModel();
     void populateTree();
+    void addOperationItem(const OperationConfiguration& op);
 };
 
 #endif // LEFTPANEL_H
