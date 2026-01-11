@@ -41,6 +41,7 @@ void MainPresenter::connectSignals() {
     connect(&window, &MainWindow::onGenerateGCodePressed, this, &MainPresenter::onGenerateGCodePressed);
 
     connect(&window.getLeftPanel(), &LeftPanel::operationDeleteRequested, this, &MainPresenter::onOperationDeleteRequested);
+    connect(&window.getLeftPanel(), &LeftPanel::operationEditRequested, this, &MainPresenter::onOperationEditRequested);
 }
 
 void MainPresenter::showDXFImportDialog(std::string inputDXF) {
@@ -119,6 +120,55 @@ void MainPresenter::onOperationDeleteRequested(int index) {
     spdlog::info("Operation deleted successfully");
 }
 
+void MainPresenter::onOperationEditRequested(int index) {
+    spdlog::info("Edit operation requested for index: {}", index);
+
+    if (!project) {
+        spdlog::warn("No project loaded");
+        return;
+    }
+
+    if (index < 0 || index >= static_cast<int>(project->operations.size())) {
+        spdlog::warn("Invalid operation index: {}", index);
+        return;
+    }
+
+    // Store the index being edited
+    editingOperationIndex = index;
+
+    const auto& operation = project->operations[index];
+
+    // Create appropriate presenter based on operation type
+    switch (operation.operationType) {
+        case OperationType::Facing:
+            spdlog::info("Editing facing operation");
+            currentOpConfigView = std::make_unique<OperationConfigurationView>(FacingOperationPresenter::visibility);
+            currentOpConfigPresenter = std::make_unique<FacingOperationPresenter>(machineConfig, toolTable, *project, window.getGeometryView(), *currentOpConfigView);
+            break;
+
+        case OperationType::Turning:
+            spdlog::info("Editing turning operation");
+            currentOpConfigView = std::make_unique<OperationConfigurationView>(TurningOperationPresenter::visibility);
+            currentOpConfigPresenter = std::make_unique<TurningOperationPresenter>(machineConfig, toolTable, *project, window.getGeometryView(), *currentOpConfigView);
+            break;
+
+        case OperationType::Parting:
+            spdlog::info("Editing parting operation");
+            currentOpConfigView = std::make_unique<OperationConfigurationView>(PartingOperationPresenter::visibility);
+            currentOpConfigPresenter = std::make_unique<PartingOperationPresenter>(machineConfig, toolTable, *project, window.getGeometryView(), *currentOpConfigView);
+            break;
+
+        default:
+            spdlog::warn("Unsupported operation type for editing");
+            return;
+    }
+
+    // Set initial configuration from existing operation
+    currentOpConfigPresenter->setInitialConfiguration(operation);
+
+    showCurrentOperation();
+}
+
 void MainPresenter::setProject(Project p) {
     project = std::make_unique<Project>(p);
     window.setProject(*project);
@@ -146,15 +196,32 @@ void MainPresenter::showMachineConfigDialog() {
 void MainPresenter::onOperationConfigOkPressed() {
     spdlog::info("Operation configuration OK pressed");
 
-    project->operations.push_back(currentOpConfigPresenter->getOperationConfiguration());
+    const auto& newConfig = currentOpConfigPresenter->getOperationConfiguration();
+
+    if (editingOperationIndex.has_value()) {
+        // Edit mode: replace existing operation
+        int index = editingOperationIndex.value();
+        spdlog::info("Updating operation at index: {}", index);
+
+        project->operations[index] = newConfig;
+        toolpaths[index] = ToolpathGenerator::generateToolpath(newConfig, machineConfig);
+
+        editingOperationIndex.reset();
+    } else {
+        // Add mode: append new operation
+        spdlog::info("Adding new operation");
+
+        project->operations.push_back(newConfig);
+        toolpaths.push_back(ToolpathGenerator::generateToolpath(newConfig, machineConfig));
+    }
+
+    // Save and update UI
     saveProject(*project, project->savePath);
     window.setProject(*project);
-
-    toolpaths.push_back(ToolpathGenerator::generateToolpath(currentOpConfigPresenter->getOperationConfiguration(), machineConfig));
+    toolpathPlotter.plotToolpaths(toolpaths);
 
     window.restoreLeftPanel();
     window.enableOperationButtons();
-    toolpathPlotter.plotToolpaths(toolpaths);
 
     // Clear the current operation configuration view and presenter
     currentOpConfigView.reset();
@@ -203,6 +270,9 @@ void MainPresenter::onGenerateGCodePressed() {
 
 void MainPresenter::onOperationConfigCancelPressed() {
     spdlog::info("Operation configuration Cancel pressed");
+
+    // Reset edit mode if active
+    editingOperationIndex.reset();
 
     // Restore the left panel and enable operation buttons without saving changes
     window.restoreLeftPanel();

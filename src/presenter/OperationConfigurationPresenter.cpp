@@ -250,3 +250,17 @@ void OperationConfigurationPresenter::onTabChanged(OperationConfigTab tab) {
             break;
     }
 }
+
+void OperationConfigurationPresenter::setInitialConfiguration(const OperationConfiguration& config) {
+    spdlog::debug("Setting initial configuration for editing");
+    operationConfig = config;
+    configView.setOperationConfiguration(operationConfig);
+
+    // Update geometry selection if any
+    if (!operationConfig.geometrySelection.empty()) {
+        geometryView.setSelectedSegments(operationConfig.geometrySelection);
+    }
+
+    // Update plot helper
+    plotHelper.update();
+}

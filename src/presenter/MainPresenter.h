@@ -29,6 +29,8 @@ class MainPresenter : public QObject {
     std::unique_ptr<OperationConfigurationView> currentOpConfigView;
     std::unique_ptr<OperationConfigurationPresenter> currentOpConfigPresenter;
 
+    std::optional<int> editingOperationIndex;
+
     std::vector<TToolpathSequence> toolpaths;
 
     ToolpathPlotter toolpathPlotter;
@@ -46,6 +48,7 @@ private slots:
     void onPartingPressed();
 
     void onOperationDeleteRequested(int index);
+    void onOperationEditRequested(int index);
 
     void onOperationConfigOkPressed();
     void onOperationConfigCancelPressed();

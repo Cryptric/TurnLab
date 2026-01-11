@@ -87,6 +87,9 @@ public:
     OperationConfigVisibility getVisibilityConfig() const;
     const OperationConfiguration& getOperationConfiguration() const;
 
+    // Set initial configuration for editing
+    void setInitialConfiguration(const OperationConfiguration& config);
+
 };
 
 #endif //TURNLAB_OPERATIONCONFIGURATIONPRESENTER_H
