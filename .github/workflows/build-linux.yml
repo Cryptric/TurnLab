@@ -99,17 +99,13 @@ jobs:
 
     - name: Download linuxdeploy and Qt plugin
       run: |
-        wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-        wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-        chmod +x linuxdeploy*.AppImage
-        # Extract AppImages to avoid FUSE issues
-        ./linuxdeploy-x86_64.AppImage --appimage-extract
-        ./linuxdeploy-plugin-qt-x86_64.AppImage --appimage-extract
-        mv squashfs-root linuxdeploy-squashfs
-        mv squashfs-root-1 linuxdeploy-plugin-qt-squashfs
+        wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+        chmod +x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage
 
     - name: Build AppImage
       run: |
+        export APPIMAGE_EXTRACT_AND_RUN=1
         export QMAKE=/usr/bin/qmake6
         export QT_ROOT_DIR=/usr
         export LD_LIBRARY_PATH=/usr/local/qwt-6.3.1-dev/lib:$LD_LIBRARY_PATH
@@ -118,7 +114,11 @@ jobs:
         mkdir -p AppDir/usr/lib
         cp -P /usr/local/qwt-6.3.1-dev/lib/libqwt.so* AppDir/usr/lib/
         # Run linuxdeploy with Qt plugin
-        ./linuxdeploy-squashfs/AppRun --appdir AppDir --plugin qt --output appimage
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir \
+          --executable AppDir/usr/bin/TurnLab \
+          --desktop-file AppDir/usr/share/applications/turnlab.desktop \
+          --plugin qt \
+          --output appimage
 
     - name: Upload AppImage
       uses: actions/upload-artifact@v4
