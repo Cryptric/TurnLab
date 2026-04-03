@@ -86,16 +86,7 @@ jobs:
         EOF
 
     - name: Create AppImage icon
-      run: |
-        if [ -f res/icons/app-icon.png ]; then
-          cp res/icons/app-icon.png AppDir/usr/share/icons/hicolor/256x256/apps/turnlab.png
-        else
-          # Create a placeholder 256x256 PNG
-          sudo apt-get install -y imagemagick 2>/dev/null || true
-          convert -size 256x256 xc:blue -fill white -pointsize 72 -gravity center \
-            -annotate +0+0 "TL" AppDir/usr/share/icons/hicolor/256x256/apps/turnlab.png 2>/dev/null || \
-          echo "No icon - will use default"
-        fi
+      run: cp res/icons/lathe.png AppDir/usr/share/icons/hicolor/256x256/apps/turnlab.png
 
     - name: Download linuxdeploy and Qt plugin
       run: |
@@ -124,4 +115,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: TurnLab-AppImage
-        path: '*.AppImage'
+        path: 'TurnLab*.AppImage'
