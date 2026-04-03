@@ -13,9 +13,8 @@
 struct Tool {
     int number;
     std::string description;
-    std::string isoCode;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Tool, number, description, isoCode);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Tool, number, description);
 };
 
 struct ToolTable {

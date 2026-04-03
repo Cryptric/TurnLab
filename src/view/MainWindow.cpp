@@ -78,7 +78,7 @@ void MainWindow::createRibbonBar() {
 
     generateGCodeAction = ribbonBar->addAction(QIcon(":/res/icons/export.png"), "Generate GCode");
 
-    connect(toolTableAction, &QAction::triggered, this, &MainWindow::showToolTable);
+    connect(toolTableAction, &QAction::triggered, this, [this]() {emit this->onToolTablePressed(); });
     connect(machineConfigAction, &QAction::triggered, this, [this]() {emit this->onMachineConfigPressed(); });
     connect(newAction, &QAction::triggered, this, [this]() {emit this->onLoadDXFPressed(); });
     connect(generateGCodeAction, &QAction::triggered, this, [this]() {emit this->onGenerateGCodePressed(); });
@@ -89,11 +89,6 @@ void MainWindow::createRibbonBar() {
     connect(threadingAction, &QAction::triggered, this, [this]() {emit this->onThreadingPressed(); });
     connect(partingAction, &QAction::triggered, this, [this]() {emit this->onPartingPressed(); });
     connect(drillingAction, &QAction::triggered, this, [this]() {emit this->onDrillingPressed(); });
-}
-
-void MainWindow::showToolTable() {
-    ToolTableDialog dialog(this);
-    dialog.exec();
 }
 
 void MainWindow::setProject(const Project& project) const {

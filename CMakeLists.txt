@@ -106,6 +106,8 @@ add_executable(TurnLab
         src/presenter/operation/TurningOperationPresenter.h
         src/presenter/operation/PartingOperationPresenter.cpp
         src/presenter/operation/PartingOperationPresenter.h
+        src/presenter/tool/table/ToolTablePresenter.cpp
+        src/presenter/tool/table/ToolTablePresenter.h
 )
 
 target_link_libraries(TurnLab

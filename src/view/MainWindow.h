@@ -68,9 +68,6 @@ public:
     void replaceLeftPanel(QWidget* newWidget);
     void restoreLeftPanel();
 
-private slots:
-    void showToolTable();
-
 private:
     void setupUI();
     void createRibbonBar();

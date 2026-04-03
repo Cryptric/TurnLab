@@ -15,6 +15,7 @@
 #include "operation/FacingOperationPresenter.h"
 #include "operation/PartingOperationPresenter.h"
 #include "operation/TurningOperationPresenter.h"
+#include "tool/table/ToolTablePresenter.h"
 #include "toolpath/ToolpathGenerator.h"
 
 MainPresenter::MainPresenter() : machineConfig(ConfigurationManager::loadMachineConfig()), toolTable(ConfigurationManager::loadToolTable()), window(machineConfig, toolTable), toolpathPlotter(window.getGeometryView()) {
@@ -32,6 +33,8 @@ MainPresenter::MainPresenter(Project project) : MainPresenter() {
 
 void MainPresenter::connectSignals() {
     connect(&window, &MainWindow::onMachineConfigPressed, this, &MainPresenter::showMachineConfigDialog);
+    connect(&window, &MainWindow::onToolTablePressed, this, &MainPresenter::showToolTableDialog);
+
     connect(&window, &MainWindow::onLoadDXFPressed, this, [this]() { showDXFImportDialog(); });
 
     connect(&window, &MainWindow::onFacingPressed, this, &MainPresenter::onFacingPressed);
@@ -191,6 +194,17 @@ void MainPresenter::showMachineConfigDialog() {
     machineConfig = updatedConfig;
     ConfigurationManager::saveMachineConfig(machineConfig);
     spdlog::info("Machine configuration updated and saved");
+}
+
+void MainPresenter::showToolTableDialog() {
+    spdlog::info("Showing tool table dialog");
+    ToolTablePresenter presenter(&window);
+    ToolTable updatedToolTable = presenter.showDialog(toolTable);
+
+    // Save the updated tool table
+    toolTable = updatedToolTable;
+    ConfigurationManager::saveToolTable(toolTable);
+    spdlog::info("Tool table updated and saved");
 }
 
 void MainPresenter::onOperationConfigOkPressed() {

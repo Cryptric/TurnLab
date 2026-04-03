@@ -42,8 +42,7 @@ void init_py_module(py::module& m) {
     py::class_<Tool>(m, "Tool")
         .def(py::init<>())
         .def_readwrite("number", &Tool::number)
-        .def_readwrite("description", &Tool::description)
-        .def_readwrite("iso_code", &Tool::isoCode);
+        .def_readwrite("description", &Tool::description);
 
     spdlog::info("Registering ToolTable struct");
     // Bind ToolTable

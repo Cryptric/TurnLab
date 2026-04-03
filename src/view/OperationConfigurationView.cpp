@@ -272,10 +272,9 @@ void OperationConfigurationView::setToolTable(const ToolTable& toolTable) {
 
     for (const auto& tool : toolTable.tools) {
         toolSelector->addItem(
-            QString("T%1 - %2 (%3)")
+            QString("T%1 - %2")
                 .arg(tool.number)
-                .arg(QString::fromStdString(tool.description))
-                .arg(QString::fromStdString(tool.isoCode)),
+                .arg(QString::fromStdString(tool.description)),
             tool.number
         );
     }

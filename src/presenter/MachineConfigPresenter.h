@@ -22,7 +22,7 @@ private:
 
 public:
     explicit MachineConfigPresenter(QWidget* parent = nullptr);
-    ~MachineConfigPresenter() = default;
+    ~MachineConfigPresenter() override = default;
     
     // Show the dialog and return the updated configuration
     MachineConfig showDialog(const MachineConfig& config);

@@ -10,6 +10,8 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
+#include "../../model/Tool.h"
+
 class ToolTableDialog : public QDialog {
     Q_OBJECT
 
@@ -23,6 +25,10 @@ public:
     explicit ToolTableDialog(QWidget *parent = nullptr);
     ~ToolTableDialog() = default;
 
+    void populateToolTable(const ToolTable& tools);
+    ToolTable getToolTable() const;
+
+
 private slots:
     void addTool();
     void removeTool();
@@ -34,7 +40,6 @@ private slots:
 private:
     void setupUI();
     void setupTable();
-    void populateTable();
     void connectSignals();
 };
 

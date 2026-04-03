@@ -123,11 +123,11 @@ void ConfigurationManager::saveToolTable(const ToolTable& toolTable) {
 ToolTable ConfigurationManager::createDefaultToolTable() {
     ToolTable defaultTable;
     defaultTable.tools = {
-        {1, "General Purpose Turning Tool", "CNMG120408"},
-        {2, "Finishing Turning Tool", "VNMG160404"},
-        {3, "Grooving Tool", "MGMN200-G"},
-        {4, "Threading Tool", "16ER-AG60"},
-        {5, "Parting Tool", "GTN-2"}
+        {1, "General Purpose Turning Tool"},
+        {2, "Finishing Turning Tool"},
+        {3, "Grooving Tool"},
+        {4, "Threading Tool"},
+        {5, "Parting Tool"}
     };
     return defaultTable;
 }

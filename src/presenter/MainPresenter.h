@@ -38,6 +38,9 @@ class MainPresenter : public QObject {
     void connectSignals();
 
     void showMachineConfigDialog();
+
+    void showToolTableDialog();
+
     void showDXFImportDialog(std::string inputDXF="");
 
     void showCurrentOperation();

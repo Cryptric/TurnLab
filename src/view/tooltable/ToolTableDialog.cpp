@@ -8,7 +8,6 @@ ToolTableDialog::ToolTableDialog(QWidget *parent)
     
     setupUI();
     setupTable();
-    populateTable();
     connectSignals();
 }
 
@@ -59,27 +58,14 @@ void ToolTableDialog::setupTable() {
 
 }
 
-void ToolTableDialog::populateTable() {
-    struct ToolData {
-        int number;
-        QString description;
-    };
+void ToolTableDialog::populateToolTable(const ToolTable& tools) {
+   toolTable->setRowCount(tools.tools.size());
     
-    QVector<ToolData> sampleTools = {
-        {1, "External Turning Tool"},
-        {2, "Internal Turning Tool"},
-        {3, "Threading Tool"},
-        {4, "Facing Tool"},
-        {5, "Parting Tool"}
-    };
-    
-    toolTable->setRowCount(sampleTools.size());
-    
-    for (int row = 0; row < sampleTools.size(); ++row) {
-        const auto& tool = sampleTools[row];
+    for (int row = 0; row < tools.tools.size(); ++row) {
+        const auto& tool = tools.tools[row];
         
         toolTable->setItem(row, 0, new QTableWidgetItem(QString::number(tool.number)));
-        toolTable->setItem(row, 1, new QTableWidgetItem(tool.description));
+        toolTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(tool.description)));
         
         auto* deleteBtn = new QPushButton("Delete");
         deleteBtn->setMaximumSize(60, 25);
@@ -88,6 +74,16 @@ void ToolTableDialog::populateTable() {
 
         connect(deleteBtn, &QPushButton::clicked, [this, row]() { removeTool(row); });
     }
+}
+
+ToolTable ToolTableDialog::getToolTable() const {
+    ToolTable tools;
+    for (int row = 0; row < toolTable->rowCount(); row++) {
+        int toolNr = toolTable->item(row, 0)->text().toInt();
+        std::string toolDescription = toolTable->item(row, 1)->text().toStdString();
+        tools.tools.emplace_back(toolNr, toolDescription);
+    }
+    return tools;
 }
 
 void ToolTableDialog::connectSignals() {
