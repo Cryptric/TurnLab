@@ -16,7 +16,7 @@
 #include <QSplitter>
 
 #include "GeometryView.h"
-#include "ToolTableDialog.h"
+#include "tooltable/ToolTableDialog.h"
 #include "LeftPanel.h"
 #include "OperationConfigurationView.h"
 #include "../model/Project.h"

@@ -67,7 +67,7 @@ qt6_add_resources(QT_RESOURCES resources.qrc)
 add_executable(TurnLab
         src/main.cpp
         src/view/MainWindow.cpp
-        src/view/ToolTableDialog.cpp
+        src/view/tooltable/ToolTableDialog.cpp
         src/view/LeftPanel.cpp
         src/view/GeometryView.cpp
         src/view/GeometryView.h

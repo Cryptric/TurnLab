@@ -4,7 +4,7 @@ ToolTableDialog::ToolTableDialog(QWidget *parent)
     : QDialog(parent), toolTable(nullptr), addButton(nullptr), okButton(nullptr), cancelButton(nullptr) {
     setWindowTitle("Tool Table");
     setModal(true);
-    resize(800, 600);
+    resize(500, 600);
     
     setupUI();
     setupTable();
@@ -43,7 +43,7 @@ void ToolTableDialog::setupUI() {
 
 void ToolTableDialog::setupTable() {
     QStringList headers;
-    headers << "Tool Nr" << "Description" << "ISO Code" << "Insert Visualization" << "Edit" << "Delete";
+    headers << "Tool Nr" << "Description" << "Delete";
     
     toolTable->setColumnCount(headers.size());
     toolTable->setHorizontalHeaderLabels(headers);
@@ -52,9 +52,6 @@ void ToolTableDialog::setupTable() {
     toolTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     toolTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     toolTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    toolTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    toolTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    toolTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
     
     toolTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     toolTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -66,15 +63,14 @@ void ToolTableDialog::populateTable() {
     struct ToolData {
         int number;
         QString description;
-        QString isoCode;
     };
     
     QVector<ToolData> sampleTools = {
-        {1, "External Turning Tool", "CNMG120408"},
-        {2, "Internal Turning Tool", "VCMT160408"},
-        {3, "Threading Tool", "16ER1.5ISO"},
-        {4, "Facing Tool", "TNMG160408"},
-        {5, "Parting Tool", "MGMN200"}
+        {1, "External Turning Tool"},
+        {2, "Internal Turning Tool"},
+        {3, "Threading Tool"},
+        {4, "Facing Tool"},
+        {5, "Parting Tool"}
     };
     
     toolTable->setRowCount(sampleTools.size());
@@ -84,24 +80,12 @@ void ToolTableDialog::populateTable() {
         
         toolTable->setItem(row, 0, new QTableWidgetItem(QString::number(tool.number)));
         toolTable->setItem(row, 1, new QTableWidgetItem(tool.description));
-        toolTable->setItem(row, 2, new QTableWidgetItem(tool.isoCode));
-        
-        auto* visualLabel = new QLabel("[Insert]");
-        visualLabel->setAlignment(Qt::AlignCenter);
-        visualLabel->setStyleSheet("background-color: #e0e0e0; border: 1px solid #ccc; padding: 4px;");
-        toolTable->setCellWidget(row, 3, visualLabel);
-        
-        auto* editBtn = new QPushButton("Edit");
-        editBtn->setMaximumSize(60, 25);
-        editBtn->setStyleSheet("QPushButton { font-size: 10px; }");
-        toolTable->setCellWidget(row, 4, editBtn);
         
         auto* deleteBtn = new QPushButton("Delete");
         deleteBtn->setMaximumSize(60, 25);
         deleteBtn->setStyleSheet("QPushButton { font-size: 10px; color: red; }");
-        toolTable->setCellWidget(row, 5, deleteBtn);
-        
-        connect(editBtn, &QPushButton::clicked, [this, row]() { editTool(row); });
+        toolTable->setCellWidget(row, 2, deleteBtn);
+
         connect(deleteBtn, &QPushButton::clicked, [this, row]() { removeTool(row); });
     }
 }
@@ -118,24 +102,12 @@ void ToolTableDialog::addTool() {
     
     toolTable->setItem(newRow, 0, new QTableWidgetItem(QString::number(newRow + 1)));
     toolTable->setItem(newRow, 1, new QTableWidgetItem("New Tool"));
-    toolTable->setItem(newRow, 2, new QTableWidgetItem("CNMG120408"));
-    
-    auto* visualLabel = new QLabel("[Insert]");
-    visualLabel->setAlignment(Qt::AlignCenter);
-    visualLabel->setStyleSheet("background-color: #e0e0e0; border: 1px solid #ccc; padding: 4px;");
-    toolTable->setCellWidget(newRow, 3, visualLabel);
-    
-    auto* editBtn = new QPushButton("Edit");
-    editBtn->setMaximumSize(60, 25);
-    editBtn->setStyleSheet("QPushButton { font-size: 10px; }");
-    toolTable->setCellWidget(newRow, 4, editBtn);
     
     auto* deleteBtn = new QPushButton("Delete");
     deleteBtn->setMaximumSize(60, 25);
     deleteBtn->setStyleSheet("QPushButton { font-size: 10px; color: red; }");
-    toolTable->setCellWidget(newRow, 5, deleteBtn);
-    
-    connect(editBtn, &QPushButton::clicked, [this, newRow]() { editTool(newRow); });
+    toolTable->setCellWidget(newRow, 2, deleteBtn);
+
     connect(deleteBtn, &QPushButton::clicked, [this, newRow]() { removeTool(newRow); });
     
     toolTable->selectRow(newRow);

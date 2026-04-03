@@ -7,7 +7,7 @@ A simple CAM system for CNC lathes. Import DXF profiles, configure machining ope
 - **DXF Profile Import**: Load 2D profiles with configurable offsets and coordinate systems
 - **Six Lathe Operations**: Turning, facing, threading, drilling, parting off, and contouring
 - **Visual Toolpath Preview**: Real-time visualization with zoom and pan controls
-- **Tool Management**: Persistent tool library with ISO codes and cutting parameters
+- **Tool Management**: Persistent tool library
 - **Machine Configuration**: Flexible axis directions and machine limits
 - **Python Post-Processors**: Customizable G-code generation through Python scripts
 
